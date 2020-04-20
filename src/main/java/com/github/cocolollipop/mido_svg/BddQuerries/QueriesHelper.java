@@ -9,19 +9,28 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-/** 
- the code of this class comes from the project plaquette-MIDO
-**/
+
+/**
+ * This class build an authenticator for network connection
+ * @author plaquette-MIDO
+ * @see <a href="https://github.com/Dauphine-MIDO/plaquette-MIDO"> plaquette-mido link </a>
+ */
 public class QueriesHelper {
 
 	/** 
-	 * the method get the authentificator and indicate that is this one wich is use when it's required
+	 * the method get the authenticator and indicate that is this one which is use when it's required
 	 * */
 	public static void setDefaultAuthenticator() {
 		final Authenticator myAuth = getTokenAuthenticator();
 		Authenticator.setDefault(myAuth);
 	}
 
+	
+	/** 
+	 * the method get the token value and build authenticator with this token and the ID
+	 * @return myAuth a Authenticator object which contain ID and the token value
+	 * @see <a href="https://github.com/Dauphine-MIDO/plaquette-MIDO"> plaquette-mido link </a>
+	 * */
 	public static Authenticator getTokenAuthenticator() {
 		final String tokenValue;
 		try {
@@ -35,13 +44,22 @@ public class QueriesHelper {
 		final Authenticator myAuth = getConstantAuthenticator(passwordAuthentication);
 		return myAuth;
 	}
-
+	
+	/** 
+	 * The method get the token option and return the token value
+	 * @return tokenOpt a Optional<String> object which contain the token value
+	 * */
 	private static String getTokenValue() throws IOException, IllegalStateException {
 		final Optional<String> tokenOpt = getTokenOpt();
 		return tokenOpt
 				.orElseThrow(() -> new IllegalStateException("No token found in environment, in property or in file."));
 	}
 
+	
+	/** 
+	 * This method get the API_password by using three possible ways (environment variable,system property, text file) and return the token value
+	 * @return An optional String variable. "token" If the API_password is in the environment variable or system property. "content" if the API_pasword is in text file
+	 * */
 	private static Optional<String> getTokenOpt() throws IOException {
 		{
 			final String token = System.getenv("API_password");
