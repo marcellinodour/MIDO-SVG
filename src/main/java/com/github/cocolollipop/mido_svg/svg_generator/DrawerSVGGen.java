@@ -57,23 +57,26 @@ public class DrawerSVGGen {
 
 	private SVGGraphics2D g;
 
-	private int lineYDOWN = 7; 
+	private int lineCENTER = 50; // Makes the line arrive in the center of the
 
-	private int lineYUP = -20; 
+	// rectangle
+	private int lineYDOWN = 7; // Makes the line go DOWN a little so the line is
+								// not on the text
+
+	private int lineYUP = -20; // Makes the line go UP a little so the line is
+								// not on the text
 
 	private int police;
 
 	private String svgNS;
 
 	/**
-	 * This method shows the Admission of a "formation" only if it's SHOWN in
-	 * the SVG (the user chose to draw it in the SVG)
+	 * This function shows the Admission of a "formation" (if this one is SHOWN in
+	 * the SVG)
 	 *
 	 * The admission is written in BLUE
 	 *
-	 * @param settings 
-	 * 				: corresponds to the settings of the user, if he chose to show
-	 * 				the Licence formations or the Master formations or both, for example.
+	 * @param admission
 	 *
 	 */
 
@@ -92,18 +95,16 @@ public class DrawerSVGGen {
 	}
 
 	/**
-	 * This method draws a line with an arrow 
-	 * from the point (x1,y1) to the point (x2,y2)
-	 * in the graphic g. 
+	 * This methode drawArrow, draws a line with an arrow
 	 *
-	 * @param g1 : a 2D graphic 
-	 * @param x1 : an integer corresponding to the abscissa of the first point 
-	 * @param y1 : an integer corresponding to the ordinate of the first point
-	 * @param x2 : an integer corresponding to the abscissa of the second point
-	 * @param y2 : an integer corresponding to the ordinate of the second  point
+	 * @param g1
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
 	 */
 	public void drawArrow(Graphics g1, int x1, int y1, int x2, int y2) {
-		Graphics2D graphic = (Graphics2D) g1.create();
+		Graphics2D g = (Graphics2D) g1.create();
 		int ARR_SIZE = 5;
 
 		double dx = x2 - x1, dy = y2 - y1;
@@ -111,23 +112,23 @@ public class DrawerSVGGen {
 		int len = (int) Math.sqrt(dx * dx + dy * dy);
 		AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
 		at.concatenate(AffineTransform.getRotateInstance(angle));
-		graphic.transform(at);
+		g.transform(at);
 
 		// Draw horizontal arrow starting in (0, 0)
-		graphic.drawLine(0, 0, len, 0);
-		graphic.fillPolygon(new int[] { len, len - ARR_SIZE, len - ARR_SIZE, len }, new int[] { 0, -ARR_SIZE, ARR_SIZE, 0 },
+		g.drawLine(0, 0, len, 0);
+		g.fillPolygon(new int[] { len, len - ARR_SIZE, len - ARR_SIZE, len }, new int[] { 0, -ARR_SIZE, ARR_SIZE, 0 },
 				4);
 	}
 
 	/**
-	 * Draws the rectangles and the formations titles in black according to the user's settings.
-	 * It also draws the lines between the formations in blue according to the relation between 
-	 * the formations. 
-	 * 
-	 * @param settings 
-	 * 				: corresponds to the settings of the user, if he chose to show
-	 * 				the Licence formations or the Master formations or both, for example.
+	 * Drawing of the objects the user has the choice between showing all
+	 * "formations" or only "licence" or master for that he has to change the @param
+	 * showOnly to (licenceOnly, masterOnly, both) then the rectangles arround the
+	 * "formations" are drawn, lines also
 	 *
+	 * @param lineCENTER
+	 * @param lineYDOWN
+	 * @param lineYUP
 	 */
 	public void drawFormation(Settings settings) {
 		if (settings.isHiddenLicence() == false && settings.isHiddenMaster() == false) {
@@ -139,8 +140,6 @@ public class DrawerSVGGen {
 		}
 
 		List<Formation> listToDraw = new LinkedList<>();
-		
-		int centerx1, centerx2;
 		// showing only licence formations
 		if (this.drawOnly == DrawOnly.LICENCE || this.drawOnly == DrawOnly.MASTER) {
 			listToDraw.addAll(this.fillListOfFormationToShow(drawOnly.toString()));
@@ -160,14 +159,11 @@ public class DrawerSVGGen {
 					g.getFontMetrics().stringWidth(l.getFullName()) + 20, 25); // draw
 			// rectangle
 			g.draw(t);
-			g.setPaint(new Color(223,242,255));
+			g.setPaint(Color.blue);
 			for (Formation l2 : l.getAvailableFormations()) {
 				// draw the lines between the formation and the avalaible
 				// formations
-				centerx1 = g.getFontMetrics().stringWidth(l.getFullName()) / 2;
-				centerx2 = g.getFontMetrics().stringWidth(l2.getFullName()) / 2;
-				
-				g.drawLine(l.getPoint().x + centerx1, l.getPoint().y + lineYDOWN, l2.getPoint().x + centerx2,
+				g.drawLine(l.getPoint().x + lineCENTER, l.getPoint().y + lineYDOWN, l2.getPoint().x + lineCENTER,
 						l2.getPoint().y + lineYUP);
 
 			}
@@ -177,14 +173,12 @@ public class DrawerSVGGen {
 	}
 
 	/**
-	 * This method shows the name of the manager of a formation only if it's
-	 * SHOWN in the SVG (the user choose to show it or no via the settings)
+	 * This function shows the name of the responsable of a formation (if this one
+	 * is SHOWN in the SVG)
 	 *
-	 * The manager name is written in GREEN
+	 * The responsable name is written in GREEN
 	 *
-	 * @param settings : 
-	 * 				: corresponds to the settings of the user, if he chose to show
-	 * 				the formations' manager or not, for example.
+	 * @param responsable
 	 *
 	 */
 
@@ -192,14 +186,14 @@ public class DrawerSVGGen {
 
 		if (settings.isHiddenResponsable() == false) {
 
-			g.setPaint(new Color(31,160,85));
+			g.setPaint(Color.green);
 
 			for (Formation f : this.datas.getFormations()) {
 				if (f.isShown() == true) {
 					if (f.hasGotATeacher(f) == true) {
 						g.drawString(f.getTeacher().getFullNameTeacher(),
-								f.getPoint().x - 5,
-								f.getPoint().y  - g.getFontMetrics().getHeight() - 10);
+								f.getPoint().x - (g.getFontMetrics().stringWidth(f.getFullName()) + 30),
+								f.getPoint().y);
 					}
 				}
 			}
@@ -211,21 +205,19 @@ public class DrawerSVGGen {
 	}
 
 	/**
-	 * This method shows the name of the subjects or teachers of a formation only if
-	 * it's SHOWN in the SVG.
+	 * This function shows the name of the subjects or teachers of a formation (if
+	 * this one is SHOWN in the SVG)
 	 *
-	 * If the subjects are not shown, teachers won't appear in the SVG.
+	 * If the subjects are not shown, teachers wont appear in the SVG also
 	 *
-	 * Either we'll have both, or only subjects.
+	 * Either we'll have both, or only subjects
 	 *
-	 * The size of teachers is smaller and in RED.
+	 * The size of teachers is smaller and in RED
 	 *
-	 * This function draws also lines between a subject and his prerequisites
+	 * this function draws also lines between a subject and his prerequisites
 	 *
 	 *
-	 * @param settings :
-	 * 				 corresponds to the settings of the user, if he chose to show
-	 * 				the Licence formations or the Master formations or both, for example.
+	 * @param settings
 	 *
 	 */
 
@@ -235,31 +227,19 @@ public class DrawerSVGGen {
 		if (settings.isHiddenSubject() == false) {
 
 			for (Formation f : this.datas.getFormations()) {
-				
-				/*For every formation we define horizontal and vertical 
-				 * shifts to write the courses and their managers beside
-				 * the corresponding formation.
-				 */ 
-				decX = g.getFontMetrics().stringWidth(f.getFullName()) + 12;
-				decY = g.getFontMetrics().getHeight() + 28;
-				
+
+				decX = g.getFontMetrics().stringWidth(f.getFullName()) + 20;
 
 				if (f.isShown() == true) {
-					g.setPaint(Color.pink);
-					g.drawString("Cours: ", f.getPoint().x + decX, f.getPoint().y + 18);
-					g.setPaint(Color.black);
 					for (Subject s : f.getSubjects()) {
 
-						g.drawString(s.getTitle(), f.getPoint().x + decX, f.getPoint().y + decY);
+						g.drawString(s.getTitle(), f.getPoint().x + decX, f.getPoint().y);
 						s.setPosX(f.getPoint().x + decX);
-						s.setPosY(f.getPoint().y + decY);
-						
-						/* We increment the vertical offset so that the next course will be 
-						 * written below.
-						*/
-						decY += g.getFontMetrics().getHeight() + 14;
-						
+						s.setPosY(f.getPoint().y);
+						decX += g.getFontMetrics().stringWidth(s.getTitle()) + 7;
+
 						// DRAW PREREQUISITES LINES
+
 						for (Subject s2 : f.getSubjects()) {
 							if (settings.isHiddenPrerequisites() == false) {
 								for (Subject p : s2.getListOfPrerequisites()) {
@@ -270,6 +250,7 @@ public class DrawerSVGGen {
 							}
 							g.setPaint(Color.black);
 						}
+						// }
 					}
 				}
 			}
@@ -285,6 +266,7 @@ public class DrawerSVGGen {
 							java.awt.Font font = new java.awt.Font("TimesRoman", 9, 9);
 							g.setFont(font);
 							g.drawString(s.getResponsible().getLastName(), s.getPoint().x, s.getPoint().y - 15);
+							decY += 15;
 
 						}
 					}
@@ -297,12 +279,11 @@ public class DrawerSVGGen {
 	}
 
 	/**
-	 * This method fills the listOfFormationToShow with objects
+	 * fillListOfFormationToShow method fills the listOfFormationToShow with objects
 	 * from FormationList that are of type typeOfFormation
 	 *
-	 * @param type: 
-	 * 			a String corresponding to a formation's type
-	 * @return : a list of formation of type "type"
+	 * @param typeOfFormation
+	 * @return
 	 */
 	public List<Formation> fillListOfFormationToShow(String type) {
 		List<Formation> listOfFormationToShow = new LinkedList<>();
@@ -319,6 +300,7 @@ public class DrawerSVGGen {
 		return police;
 	}
 
+	@SuppressWarnings("resource")
 	public void paint(Settings settings, DataBase datas1) throws Exception {
 		this.datas = datas1;
 
@@ -369,18 +351,13 @@ public class DrawerSVGGen {
 
 		// Finally, stream out SVG using UTF-8 encoding.
 		boolean useCSS = true; // we want to use CSS style attributes
-		//FileOutputStream output =;
-		try (Writer out = new OutputStreamWriter( extracted(), "UTF-8")) {
+		try (Writer out = new OutputStreamWriter(new FileOutputStream(DRAWING_SVG), "UTF-8")) {
 			g.stream(out, useCSS);
 		}
 
 		String content = this.svgLinkable();
-		IOUtils.write(content,  extracted(), "UTF-8");
+		IOUtils.write(content, new FileOutputStream(DRAWING_SVG), "UTF-8");
 
-	}
-
-	private FileOutputStream extracted() throws FileNotFoundException {
-		return new FileOutputStream(DRAWING_SVG);
 	}
 
 	public void setPolice(int police) {

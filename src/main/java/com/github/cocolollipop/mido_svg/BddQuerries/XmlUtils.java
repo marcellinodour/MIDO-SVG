@@ -28,7 +28,8 @@ import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.serialize.MessageWarner;
 
 /** 
-the code of this class comes from the project plaquette-MIDO
+ * @author plaquette-MIDO
+ * @see <a href="https://github.com/Dauphine-MIDO/plaquette-MIDO"> plaquette-mido link </a>
 **/
 public class XmlUtils {
 	@SuppressWarnings("unused")

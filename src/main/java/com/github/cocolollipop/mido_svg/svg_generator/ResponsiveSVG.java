@@ -5,21 +5,20 @@ import java.util.List;
 import com.github.cocolollipop.mido_svg.university.components.Formation;
 
 /**
- * This class adapts the position of objects in order to draw a
- * responsive SVG according to the user's settings.
+ * This class adapts the position of objects to draw according to the user's
+ * settings
  *
  */
 public class ResponsiveSVG {
 
 	/**
-	 * Count the number of formations of a specific level in a list.
+	 * countFormations count the number of "myYear" in lesFormations.getFullName()
 	 *
 	 * @param list
-	 *            is a LinkedList of formations
+	 *            is a LinkedList of Formation
 	 * @param myYear
-	 *            is a year of study such as "L3" or "M1"
-	 *            
-	 * @return an integer corresponding to the number of formations in "list" of level "myYear"
+	 *            is a year such as "L3" or "M1"
+	 * @return an integer or a negative if myYear isn't in the List
 	 */
 	public int countFormations(List<Formation> list, String myYear) {
 		int nb = 0;
@@ -27,27 +26,26 @@ public class ResponsiveSVG {
 			if (aFormation.getFullName().indexOf(myYear) != -1) {
 				nb++;
 			}
+
 		}
 		return nb;
 	}
 
 	/**
-	 * Determine the position of each Formation in the 
-	 * Canvas according to the number of formations and their level.
+	 * defineObjectsPosition determine the position of each Formation in the
+	 * someFormations List
 	 *
 	 * @param list
 	 *            : LinkedList of all the formations available in the University
 	 * @param canvasX
-	 *            : width of the canvas
-	 * @param canvasY
-	 * 			  : height of the canvas
+	 *            : abscissa size of the actual Canval
 	 */
 	public void defineObjectsPosition(List<Formation> list, int canvasX, int canvasY) {
 
 		/*
-		 * We have to define the initial shift. So we must count the total
-		 * number formations in "list" then calculate Y offset depending on which
-		 * formation are chosen (Only L1 or all ?). Finally we calculate X offset
+		 * We define initial offset In order to it, we must count number of each
+		 * Formation in someFormations Then calculate Y offset depending on which
+		 * formation exists (Only L1 or all ?) Finally we calculate X offset
 		 */
 		int offsetX = 0;
 		int offsetY = 0;
@@ -56,127 +54,94 @@ public class ResponsiveSVG {
 		int nbL3 = 0;
 		int nbM1 = 0;
 		int nbM2 = 0;
-		
-		int totalCptY = 0; /* O<=totalCptY<=5 corresponds to the DOM Tree height 
-						    * totalCptY = 5 means we have to draw the formations from 
-					        * level "L1" to "M2" 
-					        */
+		int totalCptY = 0; // O<=totalCptY<=5 // tal number of potential
+							// "stairs" in Y
 
-		int cptY[] = {0,0,0,0,0};   /* We assume that the indexes correspond to the levels 
-									 * ordered from "L1" to "M2"
-									 * For the moment we just initialize the tab with zeros 
-									 * Afterwards, depending on which levels the user choose to
-									 * draw, each level will have a certain height in the tree
-									 */
-								
-		
-		// First we count the number of formations of every level
+		int cptY[] = new int[5];// trigger ; cpunt if there is an object in
+								// Formation ; cptYL1 =0, else the postion of
+								// first "seen" 0<=cptY[i]<=totalcptY
+		for (int i = 0; i < 5; i++) {
+			cptY[i] = 0;
+		}
+
+		// First we count number of each formation
 		nbL1 = countFormations(list, "L1");
 		nbL2 = countFormations(list, "L2");
 		nbL3 = countFormations(list, "L3");
 		nbM1 = countFormations(list, "M1");
 		nbM2 = countFormations(list, "M2");
 
-
-		/* We fill cptY
-		 * 
-		 * For example if nbL1==0 and nbL2 == 0 
-		 * then cpt[2] == 1 which means that the level 
-		 * "L3" has the height 1 in the tree which means
-		 * "L3" is the root of the tree.
-		 * 
+		/*
+		 * We calculate Y offset
 		 */
 		int tempCpt = 0;
-		if (nbL1 != 0) {					
-			totalCptY += 1;     
+		if (nbL1 != 0) {
+			totalCptY = totalCptY + 1;
 			cptY[0] = tempCpt + 1;
 			tempCpt++;
 		}
 		if (nbL2 != 0) {
-			totalCptY += 1; 
+			totalCptY = totalCptY + 1;
 			cptY[1] = tempCpt + 1;
 			tempCpt++;
 		}
 		if (nbL3 != 0) {
-			totalCptY += 1; 
+			totalCptY = totalCptY + 1;
 			cptY[2] = tempCpt + 1;
 			tempCpt++;
 		}
 		if (nbM1 != 0) {
-			totalCptY += 1; 
+			totalCptY = totalCptY + 1;
 			cptY[3] = tempCpt + 1;
 			tempCpt++;
 		}
 		if (nbM2 != 0) {
-			totalCptY += 1; 
+			totalCptY = totalCptY + 1;
 			cptY[4] = tempCpt + 1;
+			tempCpt++;
 		}
-		
-		totalCptY+= 1;
-		
+
 		/*
 		 * Now we calculate X and Y offset
-		 * First we have to check which levels has been seted 
-		 * If it has been, then 
-		 * 		- the canvas'width should be evenly distributed 
-		 * 		over the number of formations of that level
-		 * 		- the canvas'height should also be evenly distributed 
-		 * 		over the number of formations of that level and should take 
-		 * 		into account its height like calculated before in cptY.
-		 * 		Plus, we added a margin, which is proportional to the canvas to 
-		 * 		make it responsive, so that the SVG would be centered. 
 		 */
-		if (nbL1 != 0) {
-			offsetX = canvasX / (nbL1 + 1);
-			offsetY = (int) ((canvasY / (totalCptY) ) * (cptY[0] - 1) + (canvasY * 0.1));
-			associatePositionX(list, "L1", offsetX, offsetY);
-		}
-		
-		if (nbL2 != 0) {
-			offsetX = canvasX / (nbL2 + 1);
-			offsetY = (int) ((canvasY / (totalCptY) ) * (cptY[1] - 1) + (canvasY * 0.1));
-			associatePositionX(list, "L2", offsetX, offsetY);
-		}
-		
-		if (nbL3 != 0) {
-			offsetX = canvasX / (nbL3 + 1);
-			offsetY = (int) ((canvasY / (totalCptY) ) * (cptY[2] - 1) + (canvasY * 0.1));
-			associatePositionX(list, "L3", offsetX, offsetY);
-		}
-		
-		if (nbM1 != 0) {
-			offsetX = canvasX / (nbM1 + 1);
-			offsetY = (int) ((canvasY / (totalCptY)) * (cptY[3] - 1) + (canvasY * 0.1));
-			associatePositionX(list, "M1", offsetX, offsetY);
-		}
-		
-		if (nbM2 != 0) {
-			offsetX = canvasX / (nbM2 + 2);
-			offsetY = (int) ((canvasY / (totalCptY)) * (cptY[4] - 1) + (canvasY * 0.1));
-			associatePositionX(list, "M2", offsetX, offsetY);
-		}
+		offsetX = canvasX / (nbL1 + 1);
+		offsetY = canvasY / (totalCptY + 1) * cptY[0];
+		associatePositionX(list, "L1", offsetX, offsetY);
+
+		offsetX = canvasX / (nbL2 + 1);
+		offsetY = canvasY / (totalCptY + 1) * cptY[1];
+		associatePositionX(list, "L2", offsetX, offsetY);
+
+		offsetX = canvasX / (nbL3 + 1);
+		offsetY = canvasY / (totalCptY + 1) * cptY[2];
+		associatePositionX(list, "L3", offsetX, offsetY);
+
+		offsetX = canvasX / (nbM1 + 1);
+		offsetY = canvasY / (totalCptY + 1) * cptY[3];
+		associatePositionX(list, "M1", offsetX, offsetY);
+
+		offsetX = canvasX / (nbM2 + 1);
+		offsetY = canvasY / (totalCptY + 1) * cptY[4];
+		associatePositionX(list, "M2", offsetX, offsetY);
 
 	}
 
 	/**
-	 * Associate each formation of the specified level to a certain 
-	 * position according to the coordinates passed in parameter 
+	 * associatePositionX set the posX of each Formation which satisfy
+	 * uneFormation.getFullName() == myYear
 	 *
 	 * @param list
 	 *            is a LinkedList of Formation
 	 * @param myYear
-	 *            is a year of study such as "L3" or "M1"
-	 * @param offsetX
-	 * 			  the abscissa calculated after shifting and adjusting 
-	 * @param offsetY
-	 * 			  the ordinate calculated after shifting and adjusting
+	 *            is a year such as "L3" or "M1"
+	 * @param decalage
 	 */
-	private void associatePositionX(List<Formation> list, String myYear, int offsetX, int offsetY) {
-		int i = 0;
+	private void associatePositionX(List<Formation> list, String myYear, int decalageX, int decalageY) {
+		int i = 1;
 		for (Formation aFormation : list) {
 			if (aFormation.getFullName().indexOf(myYear) != -1) {
-				aFormation.setPosX((int) (offsetX * i + offsetX * 0.5));
-				aFormation.setPosY(offsetY);
+				aFormation.setPosX(decalageX * i);
+				aFormation.setPosY(decalageY);
 				i++;
 				System.out.println("associerOK : " + aFormation.getFullName());
 			}

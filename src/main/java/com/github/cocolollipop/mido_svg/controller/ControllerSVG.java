@@ -24,7 +24,7 @@ public class ControllerSVG {
 		/** We initialize the drawer, the settings and the datas */
 		DrawerSVGGen test = new DrawerSVGGen();
 
-		Settings settings = new Settings(false, false, false, false, false, false, true, 1052, 744);
+		Settings settings = new Settings(false, true, false, false, false, false, false, 1000, 1000);
 		/** we create the DataBase **/
 		DataBase datas = new DataBase(settings);
 		/** Tags **/

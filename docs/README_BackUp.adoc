@@ -1,4 +1,4 @@
-﻿= README BACK UP (2020)
+= README BACK UP (2020)
 
 == Objectif du projet
  
@@ -63,5 +63,3 @@ Ce package contient :
 - Pour récupérer les données depuis le fichier XML sur Internet, on a utilisé la classe URL puis le parser DOM du JDK.
 - Pour générer les SVG, on a utilisé Batik
 - Pour les loggers, on a utilisé SLF4J
-
-Test pull request
