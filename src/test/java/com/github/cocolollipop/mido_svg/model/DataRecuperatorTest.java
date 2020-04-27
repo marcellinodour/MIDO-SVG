@@ -9,6 +9,8 @@ import java.util.List;
 
 import com.github.cocolollipop.mido_svg.university.components.Subject;
 
+import ebx.ebx_dataservices.StandardException;
+
 /**
  * 
  * This class enables to test the class ObjectTransformer
@@ -20,12 +22,13 @@ public class DataRecuperatorTest {
 
 	/**
 	 * Tests to see if the method getSubject create correct objects
+	 * @throws StandardException 
 	 * 
 	 * @result the first Subject collected should be "Introduction à la microéconomie" and the second "Anglais 1"
 	 * with their credits and teacher attached
 	 */
 	@Test
-	public void getSubjectsTest() {
+	public void getSubjectsTest() throws StandardException {
 		List<Subject> list = DataRecuperator.getSubjects("FRUAI0750736TPRCP1ALUEC1");
 		Assertions.assertEquals(list.size(), 2);
 		

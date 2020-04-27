@@ -4,6 +4,9 @@ import com.github.cocolollipop.mido_svg.BddQuerries.Querier;
 import com.github.cocolollipop.mido_svg.university.components.Subject;
 import com.github.cocolollipop.mido_svg.university.components.Teacher;
 
+import schemas.ebx.dataservices_1.CourseType.Root.Course;
+import schemas.ebx.dataservices_1.PersonType.Root.Person;
+
 /**
  * 
  * This class enables to make a correspondence between different classes and then create objects for the project MIDO-SVG
@@ -20,19 +23,18 @@ public class ObjectTransformer {
 	 * @author camillelanglois3
 	 */
 	public static Subject createSubject(Course course) {
-		Subject subject;
-		Querier querier = new Querier();
+		Subject subject = new Subject("", 0);
 		if(course.getEcts()!=null) {
-			subject.setCredit(course.getEcts().getValue());
+			subject.setCredit(Double.parseDouble(course.getEcts().getValue()));
 		}
 		if(course.getLevel()!=null) {
-			subject.setLevel(course.getLevel().getValue());
+			//subject.setLevel(course.getLevel().getValue());
 		}
-		if(course.getManagingTeacher()!=null) {
+		/*if(course.getManagingTeacher()!=null) {
 			Person person = querier.getPerson(course.getManagingTeacher().getValue());
 			Teacher t = createTeacher(person);
 			subject.setResponsible(t);
-		}
+		}*/
 		if(course.getCourseName()!=null) {
 			subject.setTitle(course.getCourseName().getValue());
 		}
@@ -46,7 +48,7 @@ public class ObjectTransformer {
 	 * @author camillelanglois3
 	 */
 	public static Teacher createTeacher(Person person) {
-		Teacher teacher;
+		Teacher teacher = new Teacher();
 		if(person.getGivenName()!=null) {
 			teacher.setFirstName(person.getGivenName().getValue());
 		}
