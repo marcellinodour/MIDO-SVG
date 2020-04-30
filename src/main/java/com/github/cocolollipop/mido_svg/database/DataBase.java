@@ -1,4 +1,4 @@
-package com.github.cocolollipop.mido_svg.model;
+package com.github.cocolollipop.mido_svg.database;
 
 import java.util.ArrayList;
 import java.util.HashMap;

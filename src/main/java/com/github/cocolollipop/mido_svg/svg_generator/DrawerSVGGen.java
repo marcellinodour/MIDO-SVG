@@ -24,7 +24,7 @@ import org.apache.commons.io.IOUtils;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
-import com.github.cocolollipop.mido_svg.model.DataBase;
+import com.github.cocolollipop.mido_svg.database.DataBase;
 import com.github.cocolollipop.mido_svg.university.components.Formation;
 import com.github.cocolollipop.mido_svg.university.components.Subject;
 

@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.github.cocolollipop.mido_svg.model.DataBase;
+import com.github.cocolollipop.mido_svg.database.DataBase;
 import com.github.cocolollipop.mido_svg.svg_generator.ResponsiveSVG;
 
 public class GUIJUnitTest {

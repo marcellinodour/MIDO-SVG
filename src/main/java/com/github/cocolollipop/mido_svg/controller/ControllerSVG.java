@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.github.cocolollipop.mido_svg.model.DataBase;
+import com.github.cocolollipop.mido_svg.database.DataBase;
 import com.github.cocolollipop.mido_svg.svg_generator.DrawerSVGGen;
 import com.github.cocolollipop.mido_svg.svg_generator.ResponsiveSVG;
 import com.github.cocolollipop.mido_svg.svg_generator.Settings;

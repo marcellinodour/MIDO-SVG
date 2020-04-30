@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Spinner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.cocolollipop.mido_svg.model.DataBase;
+import com.github.cocolollipop.mido_svg.database.DataBase;
 import com.github.cocolollipop.mido_svg.svg_generator.DrawerSVGGen;
 import com.github.cocolollipop.mido_svg.svg_generator.ResponsiveSVG;
 import com.github.cocolollipop.mido_svg.svg_generator.Settings;

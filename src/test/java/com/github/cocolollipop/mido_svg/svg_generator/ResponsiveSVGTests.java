@@ -2,12 +2,12 @@ package com.github.cocolollipop.mido_svg.svg_generator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
+
+import com.github.cocolollipop.mido_svg.database.DataBase;
 import com.github.cocolollipop.mido_svg.university.components.Formation;
 
 import java.awt.Point;
 import java.util.List;
-
-import com.github.cocolollipop.mido_svg.model.DataBase;
 
 public class ResponsiveSVGTests {
 	

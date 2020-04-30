@@ -1,6 +1,6 @@
-package com.github.cocolollipop.mido_svg.model;
+package com.github.cocolollipop.mido_svg.database;
 
-import com.github.cocolollipop.mido_svg.BddQuerries.Querier;
+import com.github.cocolollipop.mido_svg.university.components.Formation;
 import com.github.cocolollipop.mido_svg.university.components.Subject;
 
 import ebx.ebx_dataservices.StandardException;
@@ -20,22 +20,25 @@ public class DataRecuperator {
 
 	/** 
 	 * this method enables to get all the subjects attached to a programID
-	 * @param a String containing a program ID 
-	 * @return a List of all the Subject attached to the programID
-	 * @author camillelanglois3
+	 * @param a String containing a program ID
+	 * @param A Formation 
+	 * @param A list of subjects
+	 * @author marcellinodour and Raphda
 	 * @throws StandardException 
 	 **/
-	public static List<Subject> getSubjects(String programID) throws StandardException {
-		List<Subject> list = new ArrayList<Subject>();
+	
+	public static void getSubjects(String programID, Formation formation, List<Subject> subjects) throws StandardException {
 		Querier querier = new Querier();
+		
 		Program program = querier.getProgram(programID);
 		List<String> courseRefs = program.getProgramStructure().getValue().getRefCourse();
+		
 		for(String courseRef : courseRefs) {
 			final Course course = querier.getCourse(courseRef);
-			Subject s = ObjectTransformer.createSubject(course);
-			list.add(s);
+			Subject s = ObjectTransformer.createSubject(course, formation);
+			subjects.add(s);
 		}
-		return list;
+
 	}
 
 }
