@@ -213,5 +213,12 @@ public abstract class Formation {
 	public void setTitle(char nomFormation) {
 		this.title = nomFormation;
 	}
+	
+	public int getPosY() {
+		return this.getPoint().y;
+	}
 
+	public int getPosX() {
+		return this.getPoint().x;
+	}
 }

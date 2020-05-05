@@ -3,6 +3,7 @@ package com.github.cocolollipop.mido_svg.svg_generator;
 import java.util.List;
 
 import com.github.cocolollipop.mido_svg.university.components.Formation;
+import com.github.cocolollipop.mido_svg.university.components.Subject;
 
 /**
  * This class adapts the position of objects in order to draw a
@@ -183,4 +184,35 @@ public class ResponsiveSVG {
 		}
 	}
 
+	private void controlResponsiveSVG(List<Formation> list, int canvasX, int canvasY) throws Exception { 
+	     for(Formation f : list) {
+	      if(f.getPosY() > canvasY) {
+	       throw new Exception("the ordinate element can't beyond the canvasY");
+	      }
+	      if(f.getPosX() > canvasX) {
+	       throw new Exception("the abscissa element can't beyond the canvasX");
+	      }
+	     }
+	  
+	 }
+	 
+	 private boolean controlSetting(Formation f, int x, int y, int maxNumberOfCourse, int maxLengthOfCourse) throws Exception{
+	  boolean control = false;
+	  List<Subject> l= f.getSubjects();
+	  for(Subject s : l) {
+	   if(x < maxNumberOfCourse) {
+	    throw new Exception("Overlap control Warning : the position x of the formation according to "
+	      + "new_x < maxNumberOfCourse of the previous formation.");
+	   }
+	   else if(x > maxLengthOfCourse) {
+	    throw new Exception("overlap control Warning : the position x of the formation according to \"\n" + 
+	      "      + \"new_x > maxLengthOfCourse.");
+	   }
+	   else {
+	    control = true;
+	   }
+	  }
+	  return control;
+	 }
+	
 }
