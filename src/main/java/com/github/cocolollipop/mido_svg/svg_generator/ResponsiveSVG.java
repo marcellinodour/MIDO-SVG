@@ -52,6 +52,15 @@ public class ResponsiveSVG {
 	 */
 	public void defineObjectsPosition(List<Formation> list, int canvasX, int canvasY) {
 		
+		/*We have to define the margins:
+		 * This margins will be use in the future to calculate the offsets
+		 * and to control if an formation is written outside of the authorized area
+		 * */
+		int TOPMARGIN = (int)((double)canvasY *0.10);
+		int BOTMARGIN = (int)((double)canvasY *0.95);
+		int LEFTMARGIN = (int)((double)canvasX *0.05);
+		int RIGHTMARGIN = (int)((double)canvasX *0.95);
+		
 		/*
 		 * We have to define the initial shift. So we must count the total
 		 * number formations in "list" then calculate Y offset depending on which
@@ -77,7 +86,7 @@ public class ResponsiveSVG {
 		 * and calculate the number of formation per grade
 		 * each result is store on the ArrayList "nbFormaPerGrade"
 		 */
-		ArrayList<Integer> nbFormaPerGrade = new ArrayList<Integer>(); 
+		ArrayList<Integer> nbFormaPerGrade = new ArrayList<>(); 
 		for (int i=0; i<=4; i++) {
 			nbFormaPerGrade.add(0);
 		}
@@ -93,7 +102,7 @@ public class ResponsiveSVG {
 		 * each result is store on the ArrayList "maxSubjPerGrade"
 		 */
 		
-		ArrayList<Integer> maxSubjPerGrade = new ArrayList<Integer>(); 
+		ArrayList<Integer> maxSubjPerGrade = new ArrayList<>(); 
 		for (int i=0; i<=4; i++) {
 			maxSubjPerGrade.add(0);
 		}
@@ -140,16 +149,28 @@ public class ResponsiveSVG {
 		 * 		make it responsive, so that the SVG would be centered. 
 		 */
 		
+
+		offsetY = TOPMARGIN;
+		int margesubject;
+		int HeigtFormTittle= 50;
+		
 		for (int i=0; i<=nbFormaPerGrade.size()-1; i++) {
+			LOGGER.info("-------------------loop{}",i+1);
 			LOGGER.info("The grade {} have {} formation and {} csubjects max",i+1,nbFormaPerGrade.get(i),maxSubjPerGrade.get(i));
+			margesubject=0;
 			if (nbFormaPerGrade.get(i) !=0) {
+				if (maxSubjPerGrade.get(i)!=0) {
+					margesubject=28;
+				}
 				offsetX = canvasX / (nbFormaPerGrade.get(i) + 1);
-				offsetY = (int) ((canvasY / (totalCptY) ) * (cptY[i] - 1) + (canvasY * 0.1));
+				//offsetY = (int) ((canvasY / (totalCptY) ) * (cptY[i] - 1) + (canvasY * 0.1));
 				LOGGER.info("his position in the three is {} and the vertical offset is {}",cptY[i],offsetY);
 				associatePositionX(list, i+1, offsetX, offsetY);
+				offsetY = offsetY + (margesubject+maxSubjPerGrade.get(i)*offset_subject);	
 			}
 		}	
 	}
+	
 	
 	/**
 	 * Associate each formation of the specified level to a certain 
