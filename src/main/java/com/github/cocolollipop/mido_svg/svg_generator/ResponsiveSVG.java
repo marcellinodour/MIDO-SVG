@@ -184,17 +184,7 @@ public class ResponsiveSVG {
 		}
 	}
 
-	private void controlResponsiveSVG(List<Formation> list, int canvasX, int canvasY) throws Exception { 
-	     for(Formation f : list) {
-	      if(f.getPosY() > canvasY) {
-	       throw new Exception("the ordinate element can't beyond the canvasY");
-	      }
-	      if(f.getPosX() > canvasX) {
-	       throw new Exception("the abscissa element can't beyond the canvasX");
-	      }
-	     }
-	  
-	 }
+
 	 
 	 private boolean controlSetting(Formation f, int x, int y, int maxNumberOfCourse, int maxLengthOfCourse) throws Exception{
 	  boolean control = false;
