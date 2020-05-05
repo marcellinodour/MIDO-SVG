@@ -1,6 +1,5 @@
 package com.github.cocolollipop.mido_svg.svg_generator;
 
-import com.github.cocolollipop.mido_svg.university.components.*;	
 import com.github.cocolollipop.mido_svg.university.components.Formation;
 
 import org.slf4j.Logger;
@@ -8,9 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
-
-//import java.awt.FontMetrics;
 
 /**
  * This class adapts the position of objects in order to draw a
@@ -79,49 +75,48 @@ public class ResponsiveSVG {
 		/* 
 		 * The following instruction loop on the list of formation which is in the parameters of this method 
 		 * and calculate the number of formation per grade
-		 * each result is store on the ArrayList "nb_forma_per_grade"
+		 * each result is store on the ArrayList "nbFormaPerGrade"
 		 */
-		ArrayList<Integer> nb_forma_per_grade2 = new ArrayList<Integer>(); 
+		ArrayList<Integer> nbFormaPerGrade = new ArrayList<Integer>(); 
 		for (int i=0; i<=4; i++) {
-			nb_forma_per_grade2.add(0);
+			nbFormaPerGrade.add(0);
 		}
 		
 		for (Formation f: list) {
 			int grade=f.getGrade();
-			nb_forma_per_grade2.set(grade-1,nb_forma_per_grade2.get(grade-1)+1) ; 
+			nbFormaPerGrade.set(grade-1,nbFormaPerGrade.get(grade-1)+1) ; 
 		}
 			
 		/* 
 		 * The following instruction loop on the list of formation which is in the parameters of this method 
 		 * and calculate the maximum number of subjects per grade
-		 * each result is store on the ArrayList "maxsubj_per_grade"
+		 * each result is store on the ArrayList "maxSubjPerGrade"
 		 */
 		
-		ArrayList<Integer> maxsubj_per_grade = new ArrayList<Integer>(); 
+		ArrayList<Integer> maxSubjPerGrade = new ArrayList<Integer>(); 
 		for (int i=0; i<=4; i++) {
-			maxsubj_per_grade.add(0);
+			maxSubjPerGrade.add(0);
 		}
 		
 		for (Formation f: list) {
 			int grade=f.getGrade();
 			int nbsujet =f.getSubjects().size();
-			if (nbsujet >= maxsubj_per_grade.get(grade-1)) {
-				maxsubj_per_grade.set(grade-1, nbsujet);
+			if (nbsujet >= maxSubjPerGrade.get(grade-1)) {
+				maxSubjPerGrade.set(grade-1, nbsujet);
 			}
 		}
 		
 		/* The following instruction loop on the number of formation per grade to fill cptY and calculate totalCptY
-		 * For example grade 1 (nb_forma_per_grade[0]) and grade 2 (nb_forma_per_grade[1])
+		 * For example grade 1 (nbFormaPerGrade.get(0)) and grade 2 (nbFormaPerGrade.get(1))
 		 * then cpt[2] == 1 which means that the level 
 		 * grade 3 has the height 1 in the tree which means
 		 * grade 3 is the root of the tree.
 		 * 
 		 */
 	     
-		Iterator it = nb_forma_per_grade2.iterator();
 		int compteur = 0;
-		while(it.hasNext()) {
-			if ((int)it.next()!=0) {
+		for (Integer grade : nbFormaPerGrade) {
+			if (grade!=0) {
 				totalCptY++;
 				cptY[compteur] = totalCptY;
 			}	
@@ -129,13 +124,8 @@ public class ResponsiveSVG {
 		}
 		totalCptY+= 1; 
 		
-		/* calculate the offset for an subject */
-		/*
-		java.awt.Font Basicfont = new java.awt.Font("TimesRoman", 12, 12);
-		FontMetrics fm = FontDesignMetrics.getMetrics(Basicfont);
-		int height_font_subj = fm.getHeight();
-		int offset_subject = height_font_subj + 14; */
-		int offset_subject = 16 + 14;
+		/* calculate the offset for an subject (it is temporary, we should use Graphics2D in the futur) */
+		int offset_subject= 16 + 14;
 		
 		/*
 		 * Now we calculate X and Y offset
@@ -150,10 +140,10 @@ public class ResponsiveSVG {
 		 * 		make it responsive, so that the SVG would be centered. 
 		 */
 		
-		for (int i=0; i<=nb_forma_per_grade2.size()-1; i++) {
-			LOGGER.info("The grade {} have {} formation and {} csubjects max",i+1,nb_forma_per_grade2.get(i),maxsubj_per_grade.get(i));
-			if (nb_forma_per_grade2.get(i) !=0) {
-				offsetX = canvasX / (nb_forma_per_grade2.get(i) + 1);
+		for (int i=0; i<=nbFormaPerGrade.size()-1; i++) {
+			LOGGER.info("The grade {} have {} formation and {} csubjects max",i+1,nbFormaPerGrade.get(i),maxSubjPerGrade.get(i));
+			if (nbFormaPerGrade.get(i) !=0) {
+				offsetX = canvasX / (nbFormaPerGrade.get(i) + 1);
 				offsetY = (int) ((canvasY / (totalCptY) ) * (cptY[i] - 1) + (canvasY * 0.1));
 				LOGGER.info("his position in the three is {} and the vertical offset is {}",cptY[i],offsetY);
 				associatePositionX(list, i+1, offsetX, offsetY);
