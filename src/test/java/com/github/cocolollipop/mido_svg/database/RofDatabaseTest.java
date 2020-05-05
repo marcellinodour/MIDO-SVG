@@ -19,10 +19,10 @@ class RofDatabaseTest {
 	 * 		   First Formation = "M1 MIAGE App"
 	 * 		   First Teacher = "VUILLOD FREDERIC"
 	 * @author marcellinodour and Raphda
-	 * @throws StandardException
+	 * @throws Exception 
 	 */
 	@Test
-	void test() throws StandardException {
+	void test() throws Exception {
 		RofDatabase rof = RofDatabase.initialize();
 		assertEquals("Intelligence artificielle", rof.getSubjects().get(1).getTitle());
 		assertEquals("MIDO", rof.getDepartment().getNomDepartement());

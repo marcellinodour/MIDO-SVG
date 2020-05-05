@@ -32,7 +32,6 @@ public class RofDatabase {
 
 	private Department department;
 	private ImmutableList<Formation> formations;
-	private Settings settings;
 	private ImmutableList<Subject> subjects;
 	private ImmutableList<String> tags;
 	private ImmutableMap<String, Teacher> teachers;
@@ -41,54 +40,108 @@ public class RofDatabase {
 	/**
 	 * Initialize an immutable Database with ROF informations.
 	 * @return RofDatabase
-	 * @throws StandardException
+	 * @throws Exception 
 	 */
-	public static RofDatabase initialize() throws StandardException {
+	public static RofDatabase initialize() throws Exception {
 		return new RofDatabase();
 	}
 
-	private RofDatabase() throws StandardException {
-
-		this.settings = new Settings(true, true, true, true, true, true, true, "A4");
+	private RofDatabase() throws Exception{
 
 		QueriesHelper.setDefaultAuthenticator();
-		setDepartment(fetchDepartment());
-		setFormations(fetchFormations());
-		setSubjects(fetchSubjects());
-		setTeachers(fetchTeachers());
-		setUsers(fetchUsers());
+		setDepartment();
+		setFormations();
+		setSubjects();
+		setTeachers();
+		setUsers();
 	}
 
 	/**
-	 * Set teachers attribute
-	 * @param teachersList
+	 * This method use subject List (previously fetch) to fetch all teachers.
+	 * Set an ImmutableList of teachers
 	 */
-	private void setTeachers(ImmutableMap<String, Teacher> teachersList) {
-		this.teachers = teachersList;
+	private void setTeachers() {
+		Map<String, Teacher> teacherList = new HashMap<>();
+
+		for (Subject subject : this.subjects) {
+			if (!teacherList.containsKey(subject.getResponsible().getLastName())) {
+				teacherList.put(subject.getResponsible().getLastName(),subject.getResponsible());
+			}
+		}
+		this.teachers = ImmutableMap.copyOf(teacherList);
+	}
+
+	/** 
+	 * This method enables to get all the subjects in each formation from ROF.
+	 * Now, we only fetch subjects of M1 MIAGE APP by a hard code.
+	 * But, when we will be able to fetch all Programm ID,
+	 * we automatically fetch it.
+	 * @author marcellinodour and Raphda
+	 * Set a ImmutableList of Subject
+	 * @throws Exception 
+	 **/
+	private void setSubjects() throws Exception {
+		List<String> keys = new ArrayList<>();
+		List<Subject> rofSubjectList = new ArrayList<>();
+		keys.add("FRUAI0750736TPRCPA4AMIA-100-S1L1");
+		keys.add("FRUAI0750736TPRCPA4AMIA-100-S2L1");
+		keys.add("FRUAI0750736TPRCPA4AMIA-100-S2L2");
+		keys.add("FRUAI0750736TPRCPA4AMIAS1L2");
+
+		for(String key : keys) {
+			Querier querier = new Querier();
+
+			if (querier.getProgram(key) == null) {
+				throw new IllegalStateException();
+			}
+
+			Program program = querier.getProgram(key);
+			List<String> courseRefs = program.getProgramStructure().getValue().getRefCourse();
+
+			for(String courseRef : courseRefs) {
+
+				if (querier.getProgram(key) == null) {
+					throw new IllegalStateException();
+				}
+
+				final Course course = querier.getCourse(courseRef);
+				Subject s = createSubject(course, this.formations.get(0));
+				rofSubjectList.add(s);
+			}	
+		}
+		this.subjects = ImmutableList.copyOf(rofSubjectList);
 	}
 
 	/**
-	 * Set subjects attribute
-	 * @param subjectsList
+	 * Use to fetch formations' object from ROF.
+	 * Now, we hard coding this part due to the non knowledge of the method.
+	 * But, we project to do it in the next iteration.
+	 * Set a ImmutableList of Formation
 	 */
-	private void setSubjects(ImmutableList<Subject> subjectsList) {
-		this.subjects = subjectsList;
+	private void setFormations() {
+		List<Formation> rofFormationList = new ArrayList<>();
+
+		rofFormationList.add(new Master("M1 MIAGE App", 4));
+
+		this.formations = ImmutableList.copyOf(rofFormationList);
 	}
 
 	/**
-	 * Set formations attribute
-	 * @param formationsList
+	 * This method return a ImmutableList of users.
+	 * We plan to delete it in a next iteration (in parallel with the call of this method in the GUI). 
+	 * Set a ImmutableList of users
 	 */
-	private void setFormations(ImmutableList<Formation> formationsList) {
-		this.formations = formationsList;
-	}
 
-	/**
-	 * Set users attribute
-	 * @param usersList
-	 */
-	private void setUsers(ImmutableList<String> usersList) {
-		this.users = usersList;
+	private void setUsers() {
+		List<String> usersList = new ArrayList<>();
+
+		usersList.add("ikram");
+		usersList.add("romain");
+		usersList.add("jules");
+		usersList.add("cocolollipop");
+		usersList.add("ocailloux");
+
+		this.users = ImmutableList.copyOf(usersList);
 	}
 
 	/**
@@ -100,145 +153,56 @@ public class RofDatabase {
 	}
 
 	/**
-	 * Set department attribute
-	 * @param department
+	 * Use to fetch departments' object from ROF.
+	 * Now, we hard coding this part due to the non knowledge of the method.
+	 * But, we project to do it in the next iteration.
+	 * Set a Department
 	 */
-	private void setDepartment(Department department) {
-		this.department = department;
+	private void setDepartment() {
+
+		Department MIDO = new Department("MIDO");
+
+		this.department = MIDO;
 	}
 
 	/**
 	 * Use to get subjects attribute
-	 * @return subjects
+	 * Set subjects
 	 */
-	public List<Subject> getSubjects() {
+	public ImmutableList<Subject> getSubjects() {
 		return subjects;
 	}
 
 	/**
-	 * Use to get settings attribute
-	 * @return settings
-	 */
-	public Settings getSettings() {
-		return settings;
-	}
-
-	/**
 	 * Use to get tags attribute
-	 * @return tags
+	 * Set tags
 	 */
-	public List<String> getTags() {
+	public ImmutableList<String> getTags() {
 		return tags;
 	}
 
 	/**
 	 * Use to get formations attribute
-	 * @return formations
+	 * Set formations
 	 */
-	public List<Formation> getFormations() {
+	public ImmutableList<Formation> getFormations() {
 		return formations;
 	}
 
 	/**
 	 * Use to get teachers attribute
-	 * @return teachers
+	 * Set teachers
 	 */
-	public Map<String, Teacher> getTeachers() {
+	public ImmutableMap<String, Teacher> getTeachers() {
 		return teachers;
 	}
 
 	/**
 	 * Use to get users attribute
-	 * @return users
+	 * Set users
 	 */
 	public ImmutableList<String> getUsers() {
 		return users;
-	}
-
-	/**
-	 * Use to fetch departments' object from ROF.
-	 * Now, we hard coding this part due to the non knowledge of the method.
-	 * But, we project to do it in the next iteration.
-	 * @return a Department
-	 */
-	private Department fetchDepartment() {
-		Department MIDO = new Department("MIDO");
-		return MIDO;
-	}
-
-	/**
-	 * Use to fetch formations' object from ROF.
-	 * Now, we hard coding this part due to the non knowledge of the method.
-	 * But, we project to do it in the next iteration.
-	 * @return a ImmutableList of Formation
-	 */
-	private ImmutableList<Formation> fetchFormations() {
-		List<Formation> rofFormationList = new ArrayList<>();
-		rofFormationList.add(new Master("M1 MIAGE App", 4));
-
-		return ImmutableList.copyOf(rofFormationList);
-	}
-
-	/** 
-	 * This method enables to get all the subjects in each formation from ROF.
-	 * Now, we only fetch subjects of M1 MIAGE APP by a hard code.
-	 * But, when we will be able to fetch all Programm ID,
-	 * we automatically fetch it.
-	 * @author marcellinodour and Raphda
-	 * @throws StandardException 
-	 * @return a ImmutableList of Subject
-	 **/
-	private ImmutableList<Subject> fetchSubjects() throws StandardException {
-		List<String> keys = new ArrayList<>();
-		List<Subject> rofSubjectList = new ArrayList<>();
-		keys.add("FRUAI0750736TPRCPA4AMIA-100-S1L1");
-		keys.add("FRUAI0750736TPRCPA4AMIA-100-S2L1");
-		keys.add("FRUAI0750736TPRCPA4AMIA-100-S2L2");
-		keys.add("FRUAI0750736TPRCPA4AMIAS1L2");
-
-		for(String key : keys) {
-			Querier querier = new Querier();
-
-			Program program = querier.getProgram(key);
-			List<String> courseRefs = program.getProgramStructure().getValue().getRefCourse();
-
-			for(String courseRef : courseRefs) {
-				final Course course = querier.getCourse(courseRef);
-				Subject s = createSubject(course, this.formations.get(0));
-				rofSubjectList.add(s);
-			}	
-		}
-		return ImmutableList.copyOf(rofSubjectList);
-	}
-
-	/**
-	 * This method use subject List (previously fetch) to fetch all teachers.
-	 * @return ImmutableMap of teachers
-	 */
-	private ImmutableMap<String, Teacher> fetchTeachers() {
-		Map<String, Teacher> teacherList = new HashMap<>();
-		for (Subject subject : this.subjects) {
-			if (!teacherList.containsKey(subject.getResponsible().getLastName())) {
-				teacherList.put(subject.getResponsible().getLastName(),subject.getResponsible());
-			}
-		}
-		return ImmutableMap.copyOf(teacherList);
-	}
-
-	/**
-	 * This method return a ImmutableList of users.
-	 * We plan to delete it in a next iteration (in parallel with the call of this method in the GUI). 
-	 * @return a ImmutableList of users
-	 */
-	private ImmutableList<String> fetchUsers() {
-		List<String> usersList = new ArrayList<>();
-
-		usersList.add("ikram");
-		usersList.add("romain");
-		usersList.add("jules");
-		usersList.add("cocolollipop");
-		usersList.add("ocailloux");
-		return ImmutableList.copyOf(usersList);
 	}
 
 	/**
@@ -247,9 +211,9 @@ public class RofDatabase {
 	 * @param A Formation
 	 * @return an object of type Subject
 	 * @author marcellinodour and Raphda
-	 * @throws StandardException 
+	 * @throws Exception 
 	 */
-	private static Subject createSubject(Course course, Formation formation) throws StandardException {
+	private static Subject createSubject(Course course, Formation formation) throws Exception {
 		Subject subject = new Subject("", 0);
 
 		subject.setCredit(Double.parseDouble(course.getEcts().getValue()));
