@@ -3,10 +3,14 @@ package com.github.cocolollipop.mido_svg.svg_generator;
 import com.github.cocolollipop.mido_svg.university.components.*;	
 import com.github.cocolollipop.mido_svg.university.components.Formation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
-import sun.font.FontDesignMetrics;
-import java.awt.Color;
-import java.awt.FontMetrics;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+//import java.awt.FontMetrics;
 
 /**
  * This class adapts the position of objects in order to draw a
@@ -15,7 +19,9 @@ import java.awt.FontMetrics;
  */
 public class ResponsiveSVG {
 	
-
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(ResponsiveSVG.class);
+	
 	/**
 	 * Count the number of formations of a specific level in a list.
 	 *
@@ -26,6 +32,7 @@ public class ResponsiveSVG {
 	 *            
 	 * @return an integer corresponding to the number of formations in "list" of level "myYear"
 	 */
+	
 	public int countFormations(List<Formation> list, String myYear) {
 		int nb = 0;
 		for (Formation aFormation : list) {
@@ -33,21 +40,6 @@ public class ResponsiveSVG {
 				nb++;
 			}
 		}
-		return nb;
-	}
-	
-	
-	/**
-	 * Count the number of subjects in a Formation.
-	 *
-	 * @param formation is a Formation
-	 * 
-	 * @return an integer corresponding to the number of subjects in the formation"
-	 */
-	
-	public int countSubjects(Formation formation) {
-		List<Subject> listesub = formation.getSubjects();
-		int nb=listesub.size();
 		return nb;
 	}
 	
@@ -63,7 +55,7 @@ public class ResponsiveSVG {
 	 * 			  : height of the canvas
 	 */
 	public void defineObjectsPosition(List<Formation> list, int canvasX, int canvasY) {
-
+		
 		/*
 		 * We have to define the initial shift. So we must count the total
 		 * number formations in "list" then calculate Y offset depending on which
@@ -72,69 +64,78 @@ public class ResponsiveSVG {
 		int offsetX = 0;
 		int offsetY = 0;
 	
-		
-		int totalCptY = 0; /* O<=totalCptY<=5 corresponds to the DOM Tree height 
-						    * totalCptY = 5 means we have to draw the formations from 
-					        * grade 1 to 5 ("L1" to "M2") 
-					        */
+		/* O<=totalCptY<=5 corresponds to the DOM Tree height 
+		 * totalCptY = 5 means we have to draw the formations from grade 1 to 5 ("L1" to "M2") 
+		 */
+		int totalCptY = 0; 
 
-		int cptY[] = {0,0,0,0,0};   /* We assume that the indexes correspond to the grade 
-									 * ordered from 1 to 5 ("L1" to "M2")
-									 * For the moment we just initialize the tab with zeros 
-									 * Afterwards, depending on which levels the user choose to
-									 * draw, each level will have a certain height in the tree
-									 */
-	
-		/* 
-		 * The following instruction loop on the list of formation and calculate:
-		 * 
-		 * 		- the number of formation per grade --> each result is store on the array "nb_forma_per_grade"
-		 * 		- the maximum number of subjects per grade--> each result is store on the array "maxsubj_per_grade"
-		 * */
+		/* We assume that the indexes correspond to the grade ordered from 1 to 5 ("L1" to "M2")
+		 * For the moment we just initialize the tab with zeros 
+		 * Afterwards, depending on which levels the user choose to
+		 * draw, each level will have a certain height in the tree
+		 */
+		int cptY[] = {0,0,0,0,0};   
 		
-		int[] nb_forma_per_grade = new int[5]; 
-		int[] maxsubj_per_grade = new int[5];
+		/* 
+		 * The following instruction loop on the list of formation which is in the parameters of this method 
+		 * and calculate the number of formation per grade
+		 * each result is store on the ArrayList "nb_forma_per_grade"
+		 */
+		ArrayList<Integer> nb_forma_per_grade2 = new ArrayList<Integer>(); 
+		for (int i=0; i<=4; i++) {
+			nb_forma_per_grade2.add(0);
+		}
 		
 		for (Formation f: list) {
-			for (int i=0; i<=4; i++){
-				if (f.getGrade()==i+1) {
-					nb_forma_per_grade[i] ++; 
-					
-					int nbsujet =countSubjects(f);
-					if (nbsujet >= maxsubj_per_grade[i]) {
-						maxsubj_per_grade[i]= nbsujet;
-					}
-				}
-			}	
+			int grade=f.getGrade();
+			nb_forma_per_grade2.set(grade-1,nb_forma_per_grade2.get(grade-1)+1) ; 
 		}
-
+			
+		/* 
+		 * The following instruction loop on the list of formation which is in the parameters of this method 
+		 * and calculate the maximum number of subjects per grade
+		 * each result is store on the ArrayList "maxsubj_per_grade"
+		 */
 		
-
-		/* The following instruction loop on the number of formation per grade to:
-		 * 		- fill cptY
-		 * 		- calculate totalCptY
-		 * 
+		ArrayList<Integer> maxsubj_per_grade = new ArrayList<Integer>(); 
+		for (int i=0; i<=4; i++) {
+			maxsubj_per_grade.add(0);
+		}
+		
+		for (Formation f: list) {
+			int grade=f.getGrade();
+			int nbsujet =f.getSubjects().size();
+			if (nbsujet >= maxsubj_per_grade.get(grade-1)) {
+				maxsubj_per_grade.set(grade-1, nbsujet);
+			}
+		}
+		
+		/* The following instruction loop on the number of formation per grade to fill cptY and calculate totalCptY
 		 * For example grade 1 (nb_forma_per_grade[0]) and grade 2 (nb_forma_per_grade[1])
 		 * then cpt[2] == 1 which means that the level 
 		 * grade 3 has the height 1 in the tree which means
 		 * grade 3 is the root of the tree.
 		 * 
 		 */
-		
-		for (int i=0; i<=4; i++) {
-			if (nb_forma_per_grade[i] !=0) {
+	     
+		Iterator it = nb_forma_per_grade2.iterator();
+		int compteur = 0;
+		while(it.hasNext()) {
+			if ((int)it.next()!=0) {
 				totalCptY++;
-				cptY[i] = totalCptY;
+				cptY[compteur] = totalCptY;
 			}	
+			compteur++;
 		}
-		totalCptY+= 1;
+		totalCptY+= 1; 
 		
 		/* calculate the offset for an subject */
-		
+		/*
 		java.awt.Font Basicfont = new java.awt.Font("TimesRoman", 12, 12);
 		FontMetrics fm = FontDesignMetrics.getMetrics(Basicfont);
 		int height_font_subj = fm.getHeight();
-		int offset_subject = height_font_subj + 14;
+		int offset_subject = height_font_subj + 14; */
+		int offset_subject = 16 + 14;
 		
 		/*
 		 * Now we calculate X and Y offset
@@ -149,14 +150,14 @@ public class ResponsiveSVG {
 		 * 		make it responsive, so that the SVG would be centered. 
 		 */
 		
-		for (int i=0; i<=4; i++) {
-			if (nb_forma_per_grade[i] !=0) {
-				
-				offsetX = canvasX / (nb_forma_per_grade[i] + 1);
+		for (int i=0; i<=nb_forma_per_grade2.size()-1; i++) {
+			LOGGER.info("The grade {} have {} formation and {} csubjects max",i+1,nb_forma_per_grade2.get(i),maxsubj_per_grade.get(i));
+			if (nb_forma_per_grade2.get(i) !=0) {
+				offsetX = canvasX / (nb_forma_per_grade2.get(i) + 1);
 				offsetY = (int) ((canvasY / (totalCptY) ) * (cptY[i] - 1) + (canvasY * 0.1));
+				LOGGER.info("his position in the three is {} and the vertical offset is {}",cptY[i],offsetY);
 				associatePositionX(list, i+1, offsetX, offsetY);
-				
-			}	
+			}
 		}	
 	}
 	
@@ -181,9 +182,8 @@ public class ResponsiveSVG {
 				aFormation.setPosX((int) (offsetX * i + offsetX * 0.5));
 				aFormation.setPosY(offsetY);
 				i++;
-				System.out.println("associerOK : " + aFormation.getFullName());
+				//LOGGER.info("associerOK : {}",aFormation.getFullName());
 			}
 		}
 	}
-
 }

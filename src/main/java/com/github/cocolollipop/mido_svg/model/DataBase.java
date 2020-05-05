@@ -238,8 +238,8 @@ public class DataBase {
 		logique.setLevel(formationsMap.get("M1MIAGE"));
 		math.setLevel(formationsMap.get("L3MIAGEApp"));
 		proba.setLevel(formationsMap.get("L3MIAGE"));
-		java.setLevel(formationsMap.get("L3MIAGE"));
-
+		java.setLevel(formationsMap.get("L3MIAGE")); 
+		
 		subjects.add(proba);
 		subjects.add(java);
 		subjects.add(logique);
