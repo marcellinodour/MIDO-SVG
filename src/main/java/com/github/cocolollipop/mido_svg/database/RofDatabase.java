@@ -49,18 +49,18 @@ public class RofDatabase {
 	private RofDatabase() throws Exception{
 
 		QueriesHelper.setDefaultAuthenticator();
-		setDepartment();
-		setFormations();
-		setSubjects();
-		setTeachers();
-		setUsers();
+		this.department = fetchDepartment();
+		this.formations = fetchFormations();
+		this.subjects = fetchSubjects();
+		this.teachers = fetchTeachers();
+		this.users = fetchUsers();
 	}
 
 	/**
 	 * This method use subject List (previously fetch) to fetch all teachers.
 	 * Set an ImmutableList of teachers
 	 */
-	private void setTeachers() {
+	private ImmutableMap<String, Teacher> fetchTeachers() {
 		Map<String, Teacher> teacherList = new HashMap<>();
 
 		for (Subject subject : this.subjects) {
@@ -68,7 +68,7 @@ public class RofDatabase {
 				teacherList.put(subject.getResponsible().getLastName(),subject.getResponsible());
 			}
 		}
-		this.teachers = ImmutableMap.copyOf(teacherList);
+		return ImmutableMap.copyOf(teacherList);
 	}
 
 	/** 
@@ -78,9 +78,10 @@ public class RofDatabase {
 	 * we automatically fetch it.
 	 * @author marcellinodour and Raphda
 	 * Set a ImmutableList of Subject
+	 * @return 
 	 * @throws Exception 
 	 **/
-	private void setSubjects() throws Exception {
+	private ImmutableList<Subject> fetchSubjects() throws IllegalStateException {
 		List<String> keys = new ArrayList<>();
 		List<Subject> rofSubjectList = new ArrayList<>();
 		keys.add("FRUAI0750736TPRCPA4AMIA-100-S1L1");
@@ -91,25 +92,38 @@ public class RofDatabase {
 		for(String key : keys) {
 			Querier querier = new Querier();
 
-			if (querier.getProgram(key) == null) {
-				throw new IllegalStateException();
+			Program program;
+
+			try {
+				program = querier.getProgram(key);
+			} catch (StandardException e) {
+				throw new IllegalStateException(e);
 			}
 
-			Program program = querier.getProgram(key);
 			List<String> courseRefs = program.getProgramStructure().getValue().getRefCourse();
 
 			for(String courseRef : courseRefs) {
 
-				if (querier.getProgram(key) == null) {
-					throw new IllegalStateException();
+				Course course;
+
+				try {
+					course = querier.getCourse(courseRef);
+				} catch (StandardException e) {
+					throw new IllegalStateException(e);
 				}
 
-				final Course course = querier.getCourse(courseRef);
-				Subject s = createSubject(course, this.formations.get(0));
+				Subject s;
+
+				try {
+					s = createSubject(course, this.formations.get(0));
+				} catch (Exception e) {
+					throw new IllegalStateException(e);
+				}
+
 				rofSubjectList.add(s);
 			}	
 		}
-		this.subjects = ImmutableList.copyOf(rofSubjectList);
+		return ImmutableList.copyOf(rofSubjectList);
 	}
 
 	/**
@@ -117,22 +131,24 @@ public class RofDatabase {
 	 * Now, we hard coding this part due to the non knowledge of the method.
 	 * But, we project to do it in the next iteration.
 	 * Set a ImmutableList of Formation
+	 * @return 
 	 */
-	private void setFormations() {
+	private ImmutableList<Formation> fetchFormations() {
 		List<Formation> rofFormationList = new ArrayList<>();
 
 		rofFormationList.add(new Master("M1 MIAGE App", 4));
 
-		this.formations = ImmutableList.copyOf(rofFormationList);
+		return ImmutableList.copyOf(rofFormationList);
 	}
 
 	/**
 	 * This method return a ImmutableList of users.
 	 * We plan to delete it in a next iteration (in parallel with the call of this method in the GUI). 
 	 * Set a ImmutableList of users
+	 * @return 
 	 */
 
-	private void setUsers() {
+	private ImmutableList<String> fetchUsers() {
 		List<String> usersList = new ArrayList<>();
 
 		usersList.add("ikram");
@@ -141,7 +157,7 @@ public class RofDatabase {
 		usersList.add("cocolollipop");
 		usersList.add("ocailloux");
 
-		this.users = ImmutableList.copyOf(usersList);
+		return ImmutableList.copyOf(usersList);
 	}
 
 	/**
@@ -157,12 +173,13 @@ public class RofDatabase {
 	 * Now, we hard coding this part due to the non knowledge of the method.
 	 * But, we project to do it in the next iteration.
 	 * Set a Department
+	 * @return 
 	 */
-	private void setDepartment() {
+	private Department fetchDepartment() {
 
 		Department MIDO = new Department("MIDO");
 
-		this.department = MIDO;
+		return MIDO;
 	}
 
 	/**
@@ -213,7 +230,7 @@ public class RofDatabase {
 	 * @author marcellinodour and Raphda
 	 * @throws Exception 
 	 */
-	private static Subject createSubject(Course course, Formation formation) throws Exception {
+	private static Subject createSubject(Course course, Formation formation) throws IllegalStateException {
 		Subject subject = new Subject("", 0);
 
 		subject.setCredit(Double.parseDouble(course.getEcts().getValue()));
@@ -222,9 +239,15 @@ public class RofDatabase {
 		Querier querier = new Querier();
 		Teacher t = new Teacher();
 
-		if (course.getManagingTeacher() != null) {
-			Person person = querier.getPerson(course.getManagingTeacher().getValue());
-			t = createTeacher(person);
+		Person person;
+
+		if (!course.getManagingTeacher().getValue().isEmpty()){
+			try {
+				person = querier.getPerson(course.getManagingTeacher().getValue());
+				t = createTeacher(person);
+			} catch (StandardException e) {
+				throw new IllegalStateException(e);
+			}
 		}
 
 		subject.setResponsible(t);
