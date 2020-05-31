@@ -14,6 +14,8 @@ import com.github.cocolollipop.mido_svg.university.components.Formation;
 import com.github.cocolollipop.mido_svg.university.components.Master;
 import com.github.cocolollipop.mido_svg.university.components.Subject;
 import com.github.cocolollipop.mido_svg.university.components.Teacher;
+import com.github.cocolollipop.mido_svg.university.components.Licence;
+
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -22,6 +24,7 @@ import ebx.ebx_dataservices.StandardException;
 import schemas.ebx.dataservices_1.CourseType.Root.Course;
 import schemas.ebx.dataservices_1.PersonType.Root.Person;
 import schemas.ebx.dataservices_1.ProgramType.Root.Program;
+
 
 /**
  * This class fetch informations from Dauphine's DataBase 
@@ -35,7 +38,7 @@ public class RofDatabase {
 	private ImmutableList<Subject> subjects;
 	private ImmutableList<String> tags;
 	private ImmutableMap<String, Teacher> teachers;
-	private ImmutableList<String> users;
+
 
 	/**
 	 * Initialize an immutable Database with ROF informations.
@@ -53,7 +56,6 @@ public class RofDatabase {
 		this.formations = fetchFormations();
 		this.subjects = fetchSubjects();
 		this.teachers = fetchTeachers();
-		this.users = fetchUsers();
 	}
 
 	/**
@@ -125,6 +127,8 @@ public class RofDatabase {
 		}
 		return ImmutableList.copyOf(rofSubjectList);
 	}
+	
+	
 
 	/**
 	 * Use to fetch formations' object from ROF.
@@ -134,31 +138,19 @@ public class RofDatabase {
 	 * @return 
 	 */
 	private ImmutableList<Formation> fetchFormations() {
+		List<String> keys = new ArrayList<>();
 		List<Formation> rofFormationList = new ArrayList<>();
 
 		rofFormationList.add(new Master("M1 MIAGE App", 4));
+		
+		keys.add(" ");
+		keys.add(" ");
+		
 
 		return ImmutableList.copyOf(rofFormationList);
 	}
 
-	/**
-	 * This method return a ImmutableList of users.
-	 * We plan to delete it in a next iteration (in parallel with the call of this method in the GUI). 
-	 * Set a ImmutableList of users
-	 * @return 
-	 */
 
-	private ImmutableList<String> fetchUsers() {
-		List<String> usersList = new ArrayList<>();
-
-		usersList.add("ikram");
-		usersList.add("romain");
-		usersList.add("jules");
-		usersList.add("cocolollipop");
-		usersList.add("ocailloux");
-
-		return ImmutableList.copyOf(usersList);
-	}
 
 	/**
 	 * Use to get department attribute
@@ -214,13 +206,7 @@ public class RofDatabase {
 		return teachers;
 	}
 
-	/**
-	 * Use to get users attribute
-	 * Set users
-	 */
-	public ImmutableList<String> getUsers() {
-		return users;
-	}
+
 
 	/**
 	 * This method enables to create an object of type Subject starting from an object of type Course.
@@ -255,6 +241,8 @@ public class RofDatabase {
 
 		return subject;
 	}
+	
+
 
 	/**
 	 * This method enables to create an object of type Teacher starting from an object of type Person.
