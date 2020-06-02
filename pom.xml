@@ -164,7 +164,6 @@
 						<configuration>
 							<wsdlUrls>https://rof.testapi.dauphine.fr/ebx-dataservices/tables/pvRefRof/RefRof?WSDL</wsdlUrls>
 							<xauthFile>WSDL_access.txt</xauthFile>
-							<xauthFile>${env.WSDL_ACCESS}</xauthFile>
 							<vmArgs>
 								<vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
 							</vmArgs>
