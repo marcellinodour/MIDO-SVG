@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.github.cocolollipop.mido_svg.controller.ControllerJAXB;
-import com.github.cocolollipop.mido_svg.model.DataBase;
+import com.github.cocolollipop.mido_svg.database.DataBase;
 import com.github.cocolollipop.mido_svg.xml.jaxb.model.Tag;
 
 public class GUISVGTAGAjouter {

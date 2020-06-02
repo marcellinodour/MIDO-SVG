@@ -1,4 +1,4 @@
-package com.github.cocolollipop.mido_svg.BddQuerries;
+package com.github.cocolollipop.mido_svg.database;
 
 import java.io.IOException;
 import java.io.StringWriter;
