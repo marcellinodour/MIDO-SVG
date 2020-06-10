@@ -35,14 +35,14 @@ import schemas.ebx.dataservices_1.ProgramType.Root.Program;
 
 /**
  * This class fetch informations from Dauphine's DataBase 
- * @author marcellinodour and Raphda
- * @date 02/05/2020
+ * @author Sarra and Zhenyi
+ * @date 10/06/2020
  */
 public class RofDatabase {
 
 	private Department department;
 	private ImmutableList<Formation> formations;
-	
+
 	/* We chose to use a Set for the subjects'list because
 	 * we noticed that there are many duplicates
 	 * in the Rof database
@@ -96,7 +96,7 @@ public class RofDatabase {
 	private List<Program> childProgram (Program program) throws StandardException{
 		List<Program> child = new ArrayList<>();
 		Querier querier = new Querier();
-		
+
 		if (!program.getProgramStructure().getValue().getRefCourse().isEmpty()) {
 			child.add(program);
 		}else {
@@ -107,7 +107,7 @@ public class RofDatabase {
 			}
 		}
 		return child;
-		
+
 	}
 
 	/** 
@@ -121,16 +121,20 @@ public class RofDatabase {
 	 * @throws StandardException 
 	 * @throws Exception 
 	 **/
-	private ImmutableSet<Subject> fetchSubjects(Program program, Formation formation) throws IllegalStateException, StandardException {
-		
+	private ImmutableSet<Subject> fetchSubjects(Program program, Formation formation) throws IllegalStateException {
+
 		Set<Subject> rofSubjectList = new HashSet<>();
 		Querier querier = new Querier();
 		List<String> courseRefs = new ArrayList<>();
 		List<Program> progs  = new ArrayList<>();
 		List<String> refProgram = program.getProgramStructure().getValue().getRefProgram();
-		
+
 		if (!refProgram.isEmpty()) {
-			progs = childProgram(program);
+			try {
+				progs = childProgram(program);
+			} catch (StandardException e) {
+				throw new IllegalStateException(e);
+			}
 		}
 		for (Program p: progs) {
 			courseRefs = p.getProgramStructure().getValue().getRefCourse();
@@ -160,14 +164,13 @@ public class RofDatabase {
 	 * But, we project to do it in the next iteration.
 	 * Set a ImmutableList of Formation
 	 * @return 
-	 * @throws StandardException 
 	 */
-	private ImmutableList<Formation> fetchFormations() throws StandardException {
+	private ImmutableList<Formation> fetchFormations() {
 		List<String> keysFormationList = new ArrayList<>();
 		List<Formation> formationList = new ArrayList<>();
 		List <String> refProgram = new ArrayList<>();
 		List<Subject> subjectsList= new ArrayList<>();
-		
+
 		//keysFormationList.add("FRUAI0750736TPRMEA2MIE");
 		//keysFormationList.add("FRUAI0750736TPRMEA3IDO");
 		keysFormationList.add("FRUAI0750736TPRMEA3INF");
@@ -175,7 +178,7 @@ public class RofDatabase {
 		//keysFormationList.add("FRUAI0750736TPRMEA5MAP");
 		//keysFormationList.add("FRUAI0750736TPRMEA5STI");
 		//keysFormationList.add("FRUAI0750736TPRMEA5STM");
-		
+
 		for (String key : keysFormationList) {
 			Querier querier = new Querier();
 			Mention mention;
@@ -186,20 +189,20 @@ public class RofDatabase {
 				throw new IllegalStateException(e);
 			}
 			refProgram = mention.getStructure().getValue().getRefProgram();
-				
+
 			for(String refProg : refProgram) {
 				Program program;
 				try {
 					program = querier.getProgram(refProg);
-					
+
 				} catch (StandardException e) {
 					throw new IllegalStateException(e);
 				}
-				
+
 				Formation formation;
 				try {
 					formation = createFormation(program);
-					
+
 				} catch (Exception e) {
 					throw new IllegalStateException(e);
 				}
@@ -231,14 +234,14 @@ public class RofDatabase {
 		Querier querier = new Querier();
 		String key = "FRUAI0750736TOU0755233F";
 		OrgUnit orgUnit;
-		
+
 		try {
 			orgUnit = querier.getOrgUnit(key);
 		} catch (StandardException e) {
 			throw new IllegalStateException(e);
 		}
 		Department MIDO = new Department(orgUnit.getOrgUnitName().getValue());
-		
+
 		return MIDO;
 	}
 
@@ -314,7 +317,7 @@ public class RofDatabase {
 
 		return teacher;
 	}
-	
+
 	/**
 	 * This method enables to create an object of type Formation (Licence or Master) starting from 
 	 * an object of type Program.
@@ -325,16 +328,16 @@ public class RofDatabase {
 	private static Formation createFormation (Program program) throws VerifyException{
 		String level = program.getIdent().getValue().substring(3, 4);
 		//Verify.verify(Integer.class.isInstance(level));
-		
+
 		if (Integer.parseInt(level) <= 3) {
 			Licence licence = new Licence(program.getProgramName().getValue(), Integer.parseInt(level));
 			return licence;
 		}
 		Master master = new Master(program.getProgramName().getValue(), Integer.parseInt(level));
 		return master;
-		
+
 	}
-	
+
 	public static void main (String[] args) throws Exception {
 		RofDatabase test = RofDatabase.initialize();
 		for (Formation s : test.formations) {

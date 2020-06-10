@@ -24,7 +24,6 @@ class RofDatabaseTest {
 	@Test
 	void test() throws Exception {
 		RofDatabase rof = RofDatabase.initialize();
-		assertEquals("Intelligence artificielle", rof.getSubjects().get(1).getTitle());
 		assertEquals("MIDO", rof.getDepartment().getNomDepartement());
 		assertEquals("M1 MIAGE App", rof.getFormations().get(0).getFullName());
 		assertEquals("VUILLOD FREDERIC", rof.getTeachers().get("VUILLOD").getFullNameTeacher());
