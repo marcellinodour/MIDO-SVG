@@ -342,6 +342,8 @@ public class RofDatabase {
 		}
 		for (Subject s : test.subjects) {
 			System.out.println(s.getTitle());
+			//System.out.print(" "+ s.getLevel().getFullName());
+			//System.out.println();
 		}
 	}
 
