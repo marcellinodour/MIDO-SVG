@@ -13,7 +13,7 @@ import com.github.cocolollipop.mido_svg.university.components.Subject;
 import ebx.ebx_dataservices.StandardException;
 /**
  * This class aim to run several tests from {@link RofDatabase}
- * @author marcellinodour and Raphda
+ * @author marcellinodour, Raphda and TajouriSarra
  *
  */
 class RofDatabaseTest {
@@ -90,6 +90,7 @@ class RofDatabaseTest {
 		}
 		expected.removeAll(actual);
 		assertTrue(expected.isEmpty());
+
 	}
 	
 }
