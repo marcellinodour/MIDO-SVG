@@ -34,6 +34,12 @@ public class Department {
 		this.posY = y;
 
 	}
+	
+	// Constructors
+	public Department(String name) {
+		this.title = name;
+
+	}
 
 	public String getNomDepartement() {
 		return title;
