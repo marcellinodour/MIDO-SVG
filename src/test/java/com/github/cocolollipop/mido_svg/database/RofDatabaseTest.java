@@ -33,7 +33,7 @@ class RofDatabaseTest {
 		
 		assertEquals("DEP MATHS INFO DECIS DES ORG", rof.getDepartment().getNomDepartement());
 		
-		expected.add("L1 : Parcours Initial");
+		/*expected.add("M1 Affaires internationales et développement");
 		expected.add("Parcours Talents");
 		expected.add("L2 : Parcours Mathématiques-Informatique");
 		expected.add("L2 : Parcours Mathématiques-Economie");	               
@@ -45,6 +45,16 @@ class RofDatabaseTest {
 		expected.add("L2 : Parcours Mathématiques-Informatique");
 		expected.add("L3 : Parcours Mathématiques-Economie-Finance-Actuariat");
 		expected.add("L3 : Parcours Mathématiques-Informatique");
+		*/
+		expected.add("M1 Affaires internationales et développement");	               
+		expected.add("M2 parcours Affaires internationales (212)");	 
+		expected.add("M2 parcours Développement durable et responsabilités des organisations (239)");	 
+		expected.add("M2 parcours Développement durable et responsabilités des organisations (293) Professionnel et EMP");	 
+		expected.add("M2 parcours Diagnostic économique international (211)");
+		expected.add("M2 parcours Economie internationale et développement (111)");
+		expected.add("M2 parcours Peace studies (127)");
+		expected.add("M2 parcours Développement durable et organisations (DEP)");
+		expected.add("M2 parcours Supply-chain internationale (217)");
 		for (Formation f : rof.getFormations()) {
 			actual.add(f.getFullName());
 		}

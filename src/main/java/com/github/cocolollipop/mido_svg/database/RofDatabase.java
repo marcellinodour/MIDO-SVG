@@ -127,8 +127,11 @@ public class RofDatabase {
 		Querier querier = new Querier();
 		List<String> courseRefs = new ArrayList<>();
 		List<Program> progs  = new ArrayList<>();
-		List<String> refProgram = program.getProgramStructure().getValue().getRefProgram();
-
+		List<String> refProgram = new ArrayList<>();
+		
+		if (program.getProgramStructure() !=  null) {
+			refProgram = program.getProgramStructure().getValue().getRefProgram();
+		}
 		if (!refProgram.isEmpty()) {
 			try {
 				progs = childProgram(program);
@@ -173,12 +176,13 @@ public class RofDatabase {
 
 		//keysFormationList.add("FRUAI0750736TPRMEA2MIE");
 		//keysFormationList.add("FRUAI0750736TPRMEA3IDO");
-		keysFormationList.add("FRUAI0750736TPRMEA3INF");
-		keysFormationList.add("FRUAI0750736TPRMEA3MATH");
+		//keysFormationList.add("FRUAI0750736TPRMEA3INF");
+		//keysFormationList.add("FRUAI0750736TPRMEA3MATH");
 		//keysFormationList.add("FRUAI0750736TPRMEA5MAP");
 		//keysFormationList.add("FRUAI0750736TPRMEA5STI");
 		//keysFormationList.add("FRUAI0750736TPRMEA5STM");
-
+		keysFormationList.add("FRUAI0750736TPRMEAID");
+		
 		for (String key : keysFormationList) {
 			Querier querier = new Querier();
 			Mention mention;
@@ -288,9 +292,11 @@ public class RofDatabase {
 	 * @throws IllegalStateException 
 	 */
 	private static Subject createSubject(Course course, Formation formation) throws IllegalStateException {
-		Subject subject = new Subject("", 0);
-
-		subject.setCredit(Double.parseDouble(course.getEcts().getValue()));
+		Subject subject = new Subject(course.getCourseName().getValue(), 0);
+		
+		if (course.getEcts() != null) {
+			subject.setCredit(Double.parseDouble(course.getEcts().getValue()));
+		}
 		subject.setLevel(formation);
 
 		Teacher t = new Teacher();
@@ -326,30 +332,31 @@ public class RofDatabase {
 	 * @author TajouriSarra
 	 */
 	private static Formation createFormation (Program program) throws VerifyException{
-		String level = program.getIdent().getValue().substring(3, 4);
-		//Verify.verify(Integer.class.isInstance(level));
+		int level = 0;
+		if (program.getProgramName().getValue().contains("L1")) {
+			level = 1;
+		}
+		if (program.getProgramName().getValue().contains("L2")) {
+			level = 2;
+		}
+		if (program.getProgramName().getValue().contains("L3")) {
+			level = 3;
+		}
+		if (program.getProgramName().getValue().contains("M1")) {
+			level = 4;
+		}
+		if (program.getProgramName().getValue().contains("M2")) {
+			level = 5;
+		}
 
-		if (Integer.parseInt(level) <= 3) {
-			Licence licence = new Licence(program.getProgramName().getValue(), Integer.parseInt(level));
+		if (level <= 3) {
+			Licence licence = new Licence(program.getProgramName().getValue(), level);
 			return licence;
 		}
-		Master master = new Master(program.getProgramName().getValue(), Integer.parseInt(level));
+		Master master = new Master(program.getProgramName().getValue(), level);
 		return master;
 
 	}
-
-	public static void main (String[] args) throws Exception {
-		RofDatabase test = RofDatabase.initialize();
-		for (Formation s : test.formations) {
-			System.out.println(s.getFullName());
-		}
-		for (Subject s : test.subjects) {
-			System.out.println(s.getTitle());
-			//System.out.print(" "+ s.getLevel().getFullName());
-			//System.out.println();
-		}
-	}
-
 }
 
 
