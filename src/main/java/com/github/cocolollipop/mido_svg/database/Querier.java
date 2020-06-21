@@ -16,6 +16,7 @@ import schemas.ebx.dataservices_1.MentionType.Root.Mention;
 import schemas.ebx.dataservices_1.ObjectFactory;
 import schemas.ebx.dataservices_1.PersonType.Root.Person;
 import schemas.ebx.dataservices_1.ProgramType.Root.Program;
+import schemas.ebx.dataservices_1.OrgUnitType.Root.OrgUnit;
 import schemas.ebx.dataservices_1.SelectCourseRequestType;
 import schemas.ebx.dataservices_1.SelectCourseResponseType;
 import schemas.ebx.dataservices_1.SelectMentionRequestType;
@@ -24,6 +25,8 @@ import schemas.ebx.dataservices_1.SelectPersonRequestType;
 import schemas.ebx.dataservices_1.SelectPersonResponseType;
 import schemas.ebx.dataservices_1.SelectProgramRequestType;
 import schemas.ebx.dataservices_1.SelectProgramResponseType;
+import schemas.ebx.dataservices_1.SelectOrgUnitRequestType;
+import schemas.ebx.dataservices_1.SelectOrgUnitResponseType;
 
 /**
  * This class use the Rof to build objects which
@@ -121,5 +124,24 @@ public class Querier {
 		final Person person = Iterables.getOnlyElement(persons);
 		Verify.verify(person.getPersonID().equals(personId));
 		return person;
+	}
+	public List<OrgUnit> getOrgUnits(String predicate) throws StandardException {
+		final SelectOrgUnitRequestType request = new SelectOrgUnitRequestType();
+		request.setBranch("pvRefRof");
+		request.setInstance("RefRof");
+		request.setPredicate(predicate);
+		LOGGER.debug("Request: {}.", XmlUtils.toXml(new ObjectFactory().createSelectOrgUnit(request)));
+		final SelectOrgUnitResponseType result = dataservices.selectOrgUnitOperation(request);
+		LOGGER.debug("Result: {}.", XmlUtils.toXml(new ObjectFactory().createSelectOrgUnitResponse(result)));
+		return result.getData().getRoot().getOrgUnit();
+	}
+	
+	public OrgUnit getOrgUnit(String OrgUnitId) throws StandardException {
+		final String predicate = "orgUnitID = '" + OrgUnitId + "'";
+		final List<OrgUnit> orgUnits = getOrgUnits(predicate);
+		Verify.verify(orgUnits.size() == 1);
+		final OrgUnit orgUnit = Iterables.getOnlyElement(orgUnits);
+		Verify.verify(orgUnit.getOrgUnitID().equals(OrgUnitId));
+		return orgUnit;
 	}
 }
