@@ -106,7 +106,7 @@ public class GUISVGTAGSupprimer {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				GUISVGHome h = new GUISVGHome();
-				h.open(USERNAME);
+				h.open();
 				shlSupprimerTag.close();
 
 			}
@@ -120,7 +120,7 @@ public class GUISVGTAGSupprimer {
 				java.util.List<Tag> userListOfTags;
 				try {
 					// we get the user's tags
-					userListOfTags = jaxb.readTagsFileXML(USERNAME);
+					userListOfTags = jaxb.readTagsFileXML();
 				} catch (@SuppressWarnings("unused") JAXBException | IOException e1) {
 					throw new IllegalStateException();
 				}
@@ -133,7 +133,7 @@ public class GUISVGTAGSupprimer {
 						// we save the action by replacing the old user's tags
 						// file by
 						// the new one
-						jaxb.createTagsFileXML(USERNAME, userListOfTags);
+						jaxb.createTagsFileXML( userListOfTags);
 					} catch (@SuppressWarnings("unused") JAXBException e1) {
 						throw new IllegalStateException();
 					}
@@ -153,7 +153,7 @@ public class GUISVGTAGSupprimer {
 	private Set<?> getSubjects(String specificTag) {
 		java.util.List<Tag> listOfTags;
 		try {
-			listOfTags = jaxb.readTagsFileXML(USERNAME);
+			listOfTags = jaxb.readTagsFileXML();
 		} catch (JAXBException e) {
 			throw new IllegalStateException(e);
 		} catch (IOException e) {
@@ -179,7 +179,7 @@ public class GUISVGTAGSupprimer {
 	 */
 	private void initTagsList() throws JAXBException, IOException {
 		// we get the tags from the user's tags file
-		java.util.List<Tag> userListOfTags = jaxb.readTagsFileXML(USERNAME);
+		java.util.List<Tag> userListOfTags = jaxb.readTagsFileXML();
 		Set<Tag> tagsSet = new HashSet<>();
 		for (Tag tag : userListOfTags) {
 			tagsSet.add(tag);

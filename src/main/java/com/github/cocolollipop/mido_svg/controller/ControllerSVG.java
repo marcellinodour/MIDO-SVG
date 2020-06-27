@@ -29,8 +29,8 @@ public class ControllerSVG {
 		DataBase datas = new DataBase(settings);
 		/** Tags **/
 		if (datas.isUser(username)) {
-			jaxb.createTagsFileXML(username);
-			List<Tag> listOfTags = jaxb.readTagsFileXML(username);
+			jaxb.createTagsFileXML();
+			List<Tag> listOfTags = jaxb.readTagsFileXML();
 			/** we add the tags **/
 			datas.setTags(listOfTags);
 			/** We adapt the drawing according to the settings */

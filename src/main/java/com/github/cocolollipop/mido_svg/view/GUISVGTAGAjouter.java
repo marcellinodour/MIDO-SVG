@@ -53,8 +53,6 @@ public class GUISVGTAGAjouter {
 
 	private Text textNomTag;
 
-	private String USERNAME;
-
 	protected Shell shlAjouterTags;
 
 	public Tag getTag() {
@@ -67,8 +65,7 @@ public class GUISVGTAGAjouter {
 	 * @throws IOException
 	 * @throws JAXBException
 	 */
-	public void open(String username) throws JAXBException, IOException {
-		this.USERNAME = username;
+	public void open() throws JAXBException, IOException {
 		Display display = Display.getDefault();
 		createContents();
 		shlAjouterTags.open();
@@ -111,7 +108,7 @@ public class GUISVGTAGAjouter {
 			public void widgetSelected(SelectionEvent e) {
 				GUISVGHome h = new GUISVGHome();
 				shlAjouterTags.close();
-				h.open(USERNAME);
+				h.open();
 
 			}
 		});
@@ -154,7 +151,7 @@ public class GUISVGTAGAjouter {
 			public void widgetSelected(SelectionEvent e) {
 				java.util.List<Tag> userListOfTags;
 				try {
-					userListOfTags = jaxb.readTagsFileXML(USERNAME);
+					userListOfTags = jaxb.readTagsFileXML();
 				} catch (@SuppressWarnings("unused") JAXBException | IOException e2) {
 					throw new IllegalStateException();
 				}
@@ -166,7 +163,7 @@ public class GUISVGTAGAjouter {
 				userListOfTags.add(newTag);
 
 				try {
-					jaxb.createTagsFileXML(USERNAME, userListOfTags);
+					jaxb.createTagsFileXML(userListOfTags);
 				} catch (JAXBException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -187,7 +184,7 @@ public class GUISVGTAGAjouter {
 	private Set<?> getSubjects(String string) {
 		java.util.List<Tag> listOfTags;
 		try {
-			listOfTags = jaxb.readTagsFileXML(USERNAME);
+			listOfTags = jaxb.readTagsFileXML();
 		} catch (JAXBException e) {
 			throw new IllegalStateException(e);
 		} catch (IOException e) {
@@ -213,7 +210,7 @@ public class GUISVGTAGAjouter {
 	 *
 	 */
 	private void initTagsList() throws JAXBException, IOException {
-		java.util.List<Tag> userListOfTags = jaxb.readTagsFileXML(USERNAME);
+		java.util.List<Tag> userListOfTags = jaxb.readTagsFileXML();
 		Set<Tag> tagsSet = new HashSet<>();
 
 		/* Adding the subjects to the Jlist of Subjetcs */
@@ -242,10 +239,6 @@ public class GUISVGTAGAjouter {
 		shlAjouterTags = new Shell();
 		shlAjouterTags.setSize(634, 427);
 		shlAjouterTags.setText("Ajouter Tags");
-
-		Label lblLogin = new Label(shlAjouterTags, SWT.NONE);
-		lblLogin.setBounds(35, 10, 63, 104);
-		lblLogin.setText(USERNAME);
 
 		Label lblAjouterTags = new Label(shlAjouterTags, SWT.NONE);
 		lblAjouterTags.setBounds(210, 10, 137, 14);

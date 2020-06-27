@@ -88,7 +88,7 @@ public class GUISVGHome {
 
 				try {
 					shlHome.close();
-					a.open(USERNAME);
+					a.open();
 				} catch (JAXBException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

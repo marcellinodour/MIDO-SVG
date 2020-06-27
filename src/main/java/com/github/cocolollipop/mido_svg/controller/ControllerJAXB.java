@@ -28,7 +28,7 @@ public class ControllerJAXB {
 	 *
 	 * @throws JAXBException
 	 */
-	public void createTagsFileXML(String username) throws JAXBException {
+	public void createTagsFileXML() throws JAXBException {
 		// Map tags, String user
 		/**
 		 * We know that the list of available subjects contains: proba, java, logique
@@ -64,11 +64,11 @@ public class ControllerJAXB {
 		m.marshal(tagstore, System.out);
 
 		// Write to File
-		m.marshal(tagstore, new File(PATH_TAGS + username + "-tagstore-jaxb.xml"));
+		m.marshal(tagstore, new File(PATH_TAGS  + "-tagstore-jaxb.xml"));
 
 	}
 
-	public void createTagsFileXML(String username, List<Tag> userListOfTags) throws JAXBException {
+	public void createTagsFileXML(List<Tag> ListOfTags) throws JAXBException {
 		// Map tags, String user
 		/**
 		 * We know that the list of available subjects contains: proba, java, logique
@@ -77,7 +77,7 @@ public class ControllerJAXB {
 		// create tagstore
 		TagStore tagstore = new TagStore();
 		tagstore.setName("TagStore");
-		tagstore.setTagList(userListOfTags);
+		tagstore.setTagList(ListOfTags);
 
 		// create JAXB context and instantiate marshaller
 		JAXBContext context = JAXBContext.newInstance(TagStore.class);
@@ -88,7 +88,7 @@ public class ControllerJAXB {
 		m.marshal(tagstore, System.out);
 
 		// Write to File
-		m.marshal(tagstore, new File(PATH_TAGS + username + "-tagstore-jaxb.xml"));
+		m.marshal(tagstore, new File(PATH_TAGS + "-tagstore-jaxb.xml"));
 
 	}
 
@@ -100,14 +100,14 @@ public class ControllerJAXB {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("resource")
-	public List<Tag> readTagsFileXML(String username) throws JAXBException, IOException {
+	public List<Tag> readTagsFileXML() throws JAXBException, IOException {
 		System.out.println("Output from our XML File: ");
 		JAXBContext context = JAXBContext.newInstance(TagStore.class);
 		Unmarshaller um = context.createUnmarshaller();
 		/* Creates the tagStore */
-		File file = new File(PATH_TAGS + username + "-tagstore-jaxb.xml");
+		File file = new File(PATH_TAGS  + "-tagstore-jaxb.xml");
 		if (file.exists() && !file.isDirectory()) {
-			TagStore tagstore2 = (TagStore) um.unmarshal(new FileReader(PATH_TAGS + username + "-tagstore-jaxb.xml"));
+			TagStore tagstore2 = (TagStore) um.unmarshal(new FileReader(PATH_TAGS  + "-tagstore-jaxb.xml"));
 			List<Tag> list = tagstore2.getTagsList();
 			/**
 			 * The print so you can understand the results
@@ -118,8 +118,8 @@ public class ControllerJAXB {
 
 			return list;
 		} else {
-			this.createTagsFileXML(username);
-			this.readTagsFileXML(username);
+			this.createTagsFileXML();
+			this.readTagsFileXML();
 
 		}
 		return null;
