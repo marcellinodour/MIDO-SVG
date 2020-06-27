@@ -25,7 +25,7 @@ public class GUISVGGenerator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(GUISVGGenerator.class);
 
 	public static void main(String[] args) throws Exception {
-		new GUISVGGenerator().open("ocailloux");
+		new GUISVGGenerator().open();
 	}
 
 	private boolean affAdmission;
@@ -92,8 +92,6 @@ public class GUISVGGenerator {
 
 	private DrawerSVGGen svg = new DrawerSVGGen();
 
-	private String USERNAME;
-
 	private int width;
 
 	protected Shell shell;
@@ -106,8 +104,7 @@ public class GUISVGGenerator {
 	 * @throws IOException
 	 */
 
-	public void open(String username) throws IOException {
-		this.USERNAME = username;
+	public void open() throws IOException {
 		Display display = Display.getDefault();
 		createContents();
 		shell.open();
@@ -354,10 +351,6 @@ public class GUISVGGenerator {
 		shell.setSize(550, 592);
 		shell.setText("SWT Application");
 		shell.setLayout(null);
-
-		Label lblLogin = new Label(shell, SWT.NONE);
-		lblLogin.setBounds(20, 20, 300, 200);
-		lblLogin.setText(USERNAME);
 
 		Label lblNewLabel = new Label(shell, SWT.NONE);
 		lblNewLabel.setBounds(226, 47, 108, 27);

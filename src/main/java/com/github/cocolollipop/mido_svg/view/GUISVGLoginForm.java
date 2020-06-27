@@ -75,7 +75,7 @@ public class GUISVGLoginForm {
 					error.setVisible(false);
 					GUISVGHome h = new GUISVGHome();
 					shlMidosvg.close();
-					h.open(Login);
+					h.open();
 				}
 				error.setVisible(true);
 				text.setText("");

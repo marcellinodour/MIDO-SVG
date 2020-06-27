@@ -25,12 +25,20 @@ public class GUISVGHome {
 	private String USERNAME;
 
 	protected Shell shlHome;
+	
+	public static void main(String[] args) {
+		try {
+			new GUISVGHome().open();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 
 	/**
 	 * Open the window.
 	 */
-	public void open(String username) {
-		this.USERNAME = username;
+	public void open() {
 		Display display = Display.getDefault();
 		createContents();
 		shlHome.open();
@@ -52,7 +60,7 @@ public class GUISVGHome {
 				GUISVGGenerator svg = new GUISVGGenerator();
 				try {
 					shlHome.close();
-					svg.open(USERNAME);
+					svg.open();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -129,10 +137,7 @@ public class GUISVGHome {
 
 		GenererButton.setBounds(178, 152, 159, 57);
 		GenererButton.setText("Générer SVG");
-		Label lblLogin = new Label(shlHome, SWT.NONE);
-		lblLogin.setBounds(20, 20, 37, 21);
-		lblLogin.setText(USERNAME);
-
+		
 		btnAjouterTags = new Button(shlHome, SWT.NONE);
 
 		btnAjouterTags.setBounds(30, 69, 127, 28);
