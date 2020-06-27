@@ -49,7 +49,7 @@ public class RofDatabase {
 	private ImmutableList<String> tags;
 	private ImmutableMap<String, Teacher> teachers;
 	
-	static public final String MENTION_MIDO_IDENT = "PRA4AMIA-100";
+	static public final String MENTION_MIDO_IDENT = "FRUAI0750736TPR";
 
 	/**
 	 * Initialize an immutable Database with ROF informations.
@@ -175,9 +175,10 @@ public class RofDatabase {
 		List <String> refProgram = new ArrayList<>();
 		List<Subject> subjectsList= new ArrayList<>();
 		Querier querier = new Querier();
-		
+		String predicate = "mentionID = '" + RofDatabase.MENTION_MIDO_IDENT + "'";
+
 		try {
-			mentionList = querier.getMentions("MentionResponse");
+			mentionList = querier.getMentions(predicate);
 		} catch (StandardException e) {
 			throw new IllegalStateException(e);
 		}
@@ -191,13 +192,13 @@ public class RofDatabase {
 		}
 
 		if (keysFormationList.isEmpty()) {
-			keysFormationList.add("FRUAI0750736TPRMEA2MIE");
+			/*keysFormationList.add("FRUAI0750736TPRMEA2MIE");
 			keysFormationList.add("FRUAI0750736TPRMEA3IDO");
 			keysFormationList.add("FRUAI0750736TPRMEA3INF");
 			keysFormationList.add("FRUAI0750736TPRMEA3MATH");
 			keysFormationList.add("FRUAI0750736TPRMEA5MAP");
 			keysFormationList.add("FRUAI0750736TPRMEA5STI");
-			keysFormationList.add("FRUAI0750736TPRMEA5STM");
+			keysFormationList.add("FRUAI0750736TPRMEA5STM");*/
 			keysFormationList.add("FRUAI0750736TPRMEAID");
 		}
 
