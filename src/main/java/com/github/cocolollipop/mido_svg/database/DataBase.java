@@ -142,7 +142,7 @@ public class DataBase {
 	 * Initialize Department
 	 */
 	public void initDepartment() {
-		Department MIDO = new Department("MIDO", 500, 20);
+		Department MIDO = Department.factory("MIDO");
 		MIDO.setTitle("MIDO");
 		this.setDepartment(MIDO);
 	}
@@ -302,7 +302,7 @@ public class DataBase {
 
 	public void setDepartment(Department department) {
 		if (this.department == null) {
-			this.department = new Department();
+			this.department = Department.factory("");
 		}
 		this.department = department;
 	}

@@ -1,7 +1,5 @@
 package com.github.cocolollipop.mido_svg.database;
 
-import static com.google.common.base.Verify.verify;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -83,6 +81,7 @@ public class RofDatabase {
 		}
 		return ImmutableMap.copyOf(teacherList);
 	}
+
 	/**
 	 * This method enables to retrieve the final
 	 * levels of the programs which contain the courses'list in the refCourse field
@@ -93,7 +92,7 @@ public class RofDatabase {
 	 * @throws StandardException
 	 * @author TajouriSarra
 	 */
-	private List<Program> childProgram (Program program) throws StandardException{
+	private List<Program> childProgram(Program program) throws StandardException{
 		List<Program> child = new ArrayList<>();
 		Querier querier = new Querier();
 
@@ -128,7 +127,7 @@ public class RofDatabase {
 		List<String> courseRefs = new ArrayList<>();
 		List<Program> progs  = new ArrayList<>();
 		List<String> refProgram = new ArrayList<>();
-		
+
 		if (program.getProgramStructure() !=  null) {
 			refProgram = program.getProgramStructure().getValue().getRefProgram();
 		}
@@ -143,17 +142,16 @@ public class RofDatabase {
 			courseRefs = p.getProgramStructure().getValue().getRefCourse();
 			for(String courseRef : courseRefs) {
 				Course course;
+
 				try {
 					course = querier.getCourse(courseRef);
 				} catch (StandardException e) {
 					throw new IllegalStateException(e);
 				}
+
 				Subject s;
-				try {
-					s = createSubject(course, formation);
-				} catch (Exception e) {
-					throw new IllegalStateException(e);
-				}
+
+				s = createSubject(course, formation);
 
 				rofSubjectList.add(s);
 			}
@@ -182,7 +180,7 @@ public class RofDatabase {
 		//keysFormationList.add("FRUAI0750736TPRMEA5STI");
 		//keysFormationList.add("FRUAI0750736TPRMEA5STM");
 		keysFormationList.add("FRUAI0750736TPRMEAID");
-		
+
 		for (String key : keysFormationList) {
 			Querier querier = new Querier();
 			Mention mention;
@@ -244,7 +242,8 @@ public class RofDatabase {
 		} catch (StandardException e) {
 			throw new IllegalStateException(e);
 		}
-		Department MIDO = new Department(orgUnit.getOrgUnitName().getValue());
+
+		Department MIDO = Department.factory(orgUnit.getOrgUnitName().getName().toString());
 
 		return MIDO;
 	}
@@ -289,20 +288,33 @@ public class RofDatabase {
 	 * @param A Formation
 	 * @return an object of type Subject
 	 * @author marcellinodour, Raphda and TajouriSarra 
-	 * @throws IllegalStateException 
+	 * @throws IllegalStateException
 	 */
-	private static Subject createSubject(Course course, Formation formation) throws IllegalStateException {
-		Subject subject = new Subject(course.getCourseName().getValue(), 0);
-		
+	private static Subject createSubject(Course course, Formation formation) throws IllegalStateException{
+		Querier querier = new Querier();
+		Person person;
+
+		Subject subject = new Subject(course.getCourseName().getValue().getFr().getValue(), 0);
+
 		if (course.getEcts() != null) {
 			subject.setCredit(Double.parseDouble(course.getEcts().getValue()));
 		}
+
 		subject.setLevel(formation);
 
-		Teacher t = new Teacher();
+		try {
+			if (course.getContacts() == null) {
+				subject.setResponsible(new Teacher());
+			}
+			else {
+				person = querier.getPerson(course.getContacts().getValue().getRefPerson().get(0));
+				Teacher t = createTeacher(person);
+				subject.setResponsible(t);
+			}
 
-		subject.setResponsible(t);
-		subject.setTitle(course.getCourseName().getValue());
+		} catch (StandardException e) {
+			throw new IllegalStateException(e);
+		}
 
 		return subject;
 	}
@@ -316,8 +328,20 @@ public class RofDatabase {
 	private static Teacher createTeacher(Person person) {
 		Teacher teacher = new Teacher();
 
-		teacher.setAddress(person.getContactData().getValue().getEmail().getValue());
-		teacher.setPhone(person.getContactData().getValue().getTelephone().getValue());
+		if(person.getContactData().getValue().getEmail() == null) {
+			teacher.setAddress("nan");
+		}
+		else {
+			teacher.setAddress(person.getContactData().getValue().getEmail().getValue());
+		}
+
+		if(person.getContactData().getValue().getTelephone() == null) {
+			teacher.setPhone("nan");
+		}
+		else {
+			teacher.setPhone(person.getContactData().getValue().getTelephone().getValue());
+		}
+
 		teacher.setFirstName(person.getGivenName().getValue());
 		teacher.setLastName(person.getFamilyName().getValue());
 
@@ -331,32 +355,51 @@ public class RofDatabase {
 	 * @return an object of type Licence or Master depending on the formation's level
 	 * @author TajouriSarra
 	 */
-	private static Formation createFormation (Program program) throws VerifyException{
+	private static Formation createFormation (Program program) {
 		int level = 0;
-		if (program.getProgramName().getValue().contains("L1")) {
+		if (program.getProgramName().getValue().getFr().getValue().contains("L1")) {
 			level = 1;
 		}
-		if (program.getProgramName().getValue().contains("L2")) {
+		if (program.getProgramName().getValue().getFr().getValue().contains("L2")) {
 			level = 2;
 		}
-		if (program.getProgramName().getValue().contains("L3")) {
+		if (program.getProgramName().getValue().getFr().getValue().contains("L3")) {
 			level = 3;
 		}
-		if (program.getProgramName().getValue().contains("M1")) {
+		if (program.getProgramName().getValue().getFr().getValue().contains("M1")) {
 			level = 4;
 		}
-		if (program.getProgramName().getValue().contains("M2")) {
+		if (program.getProgramName().getValue().getFr().getValue().contains("M2")) {
 			level = 5;
 		}
 
 		if (level <= 3) {
-			Licence licence = new Licence(program.getProgramName().getValue(), level);
+			Licence licence = new Licence(program.getProgramName().getValue().getFr().getValue(), level);
 			return licence;
 		}
-		Master master = new Master(program.getProgramName().getValue(), level);
+
+		Master master = new Master(program.getProgramName().getValue().getFr().getValue(), level);
 		return master;
 
 	}
+
+	public static void main (String[] args) throws Exception {
+
+		RofDatabase test = RofDatabase.initialize();
+
+		System.out.print(test.getFormations().get(0).getFullName());
+
+		for (Subject s : test.subjects) {
+
+			if(s.getLevel().equals(test.getFormations().get(0))) {
+				System.out.print(s.getTitle() + " ===> ");
+				System.out.println(" "+ s.getResponsible().getFullNameTeacher());
+			}
+
+		}
+
+	}
+
 }
 
 
