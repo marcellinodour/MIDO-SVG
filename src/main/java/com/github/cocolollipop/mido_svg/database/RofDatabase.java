@@ -48,6 +48,8 @@ public class RofDatabase {
 	private ImmutableSet<Subject> subjects;
 	private ImmutableList<String> tags;
 	private ImmutableMap<String, Teacher> teachers;
+	
+	static public final String MENTION_MIDO_IDENT = "PRA4AMIA-100";
 
 	/**
 	 * Initialize an immutable Database with ROF informations.
@@ -167,22 +169,39 @@ public class RofDatabase {
 	 * @return 
 	 */
 	private ImmutableList<Formation> fetchFormations() {
+		List<Mention> mentionList = new ArrayList<>();
 		List<String> keysFormationList = new ArrayList<>();
 		List<Formation> formationList = new ArrayList<>();
 		List <String> refProgram = new ArrayList<>();
 		List<Subject> subjectsList= new ArrayList<>();
+		Querier querier = new Querier();
+		
+		try {
+			mentionList = querier.getMentions("MentionResponse");
+		} catch (StandardException e) {
+			throw new IllegalStateException(e);
+		}
+		for (Mention m : mentionList) {
+			if (m.getName().getValue().getFr().getValue().contains("Informatique")) {
+				keysFormationList.add(m.getMentionID());
+			}
+			if (m.getName().getValue().getFr().getValue().contains("Mathématiques")) {
+				keysFormationList.add(m.getMentionID());
+			}
+		}
 
-		//keysFormationList.add("FRUAI0750736TPRMEA2MIE");
-		//keysFormationList.add("FRUAI0750736TPRMEA3IDO");
-		//keysFormationList.add("FRUAI0750736TPRMEA3INF");
-		//keysFormationList.add("FRUAI0750736TPRMEA3MATH");
-		//keysFormationList.add("FRUAI0750736TPRMEA5MAP");
-		//keysFormationList.add("FRUAI0750736TPRMEA5STI");
-		//keysFormationList.add("FRUAI0750736TPRMEA5STM");
-		keysFormationList.add("FRUAI0750736TPRMEAID");
+		if (keysFormationList.isEmpty()) {
+			keysFormationList.add("FRUAI0750736TPRMEA2MIE");
+			keysFormationList.add("FRUAI0750736TPRMEA3IDO");
+			keysFormationList.add("FRUAI0750736TPRMEA3INF");
+			keysFormationList.add("FRUAI0750736TPRMEA3MATH");
+			keysFormationList.add("FRUAI0750736TPRMEA5MAP");
+			keysFormationList.add("FRUAI0750736TPRMEA5STI");
+			keysFormationList.add("FRUAI0750736TPRMEA5STM");
+			keysFormationList.add("FRUAI0750736TPRMEAID");
+		}
 
 		for (String key : keysFormationList) {
-			Querier querier = new Querier();
 			Mention mention;
 
 			try {
@@ -386,7 +405,7 @@ public class RofDatabase {
 	public static void main (String[] args) throws Exception {
 
 		RofDatabase test = RofDatabase.initialize();
-		
+
 		System.out.print(test.getFormations().get(0).getFullName());
 
 		for (Subject s : test.subjects) {
