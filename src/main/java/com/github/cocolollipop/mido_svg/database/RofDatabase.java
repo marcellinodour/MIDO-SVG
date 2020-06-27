@@ -243,7 +243,7 @@ public class RofDatabase {
 			throw new IllegalStateException(e);
 		}
 
-		Department MIDO = Department.factory(orgUnit.getOrgUnitName().getName().toString());
+		Department MIDO = Department.factory(orgUnit.getOrgUnitName().getValue());
 
 		return MIDO;
 	}
@@ -386,7 +386,7 @@ public class RofDatabase {
 	public static void main (String[] args) throws Exception {
 
 		RofDatabase test = RofDatabase.initialize();
-
+		
 		System.out.print(test.getFormations().get(0).getFullName());
 
 		for (Subject s : test.subjects) {
