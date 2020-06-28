@@ -63,7 +63,6 @@ public class DataBase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		initUsers();
 		initSubjects();
 		setPaper(FactoryPaper.TypeFormat.A4, 0, 0);
 		initDepartment();
@@ -84,7 +83,6 @@ public class DataBase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		initUsers();
 		initSubjects();
 		this.settings = settings;
 		setPaper(this.settings.getFormat(), this.settings.getWidth(), this.settings.getHeight());
@@ -363,14 +361,6 @@ public class DataBase {
 		this.teachers = teachers;
 	}
 
-	private void initUsers() {
-		this.users = new ArrayList<>();
-		this.users.add("ikram");
-		this.users.add("romain");
-		this.users.add("jules");
-		this.users.add("cocolollipop");
-		this.users.add("ocailloux");
 
-	}
 
 }
