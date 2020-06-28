@@ -25,6 +25,10 @@ public class GUISVGHome {
 	private String USERNAME;
 
 	protected Shell shlHome;
+	
+	public static void main(String[] args) throws Exception {
+		new GUISVGHome().open("ocailloux");
+	}
 
 	/**
 	 * Open the window.
