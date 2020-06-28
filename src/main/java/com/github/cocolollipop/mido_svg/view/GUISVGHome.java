@@ -26,12 +26,9 @@ public class GUISVGHome {
 
 	protected Shell shlHome;
 	
-	
-
 	public static void main(String[] args) throws Exception {
 		new GUISVGHome().open("ocailloux");
 	}
-
 
 	/**
 	 * Open the window.
