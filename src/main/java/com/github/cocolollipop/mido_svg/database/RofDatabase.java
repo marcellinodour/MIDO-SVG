@@ -18,6 +18,7 @@ import com.github.cocolollipop.mido_svg.university.components.Licence;
 import com.github.cocolollipop.mido_svg.university.components.Master;
 import com.github.cocolollipop.mido_svg.university.components.Subject;
 import com.github.cocolollipop.mido_svg.university.components.Teacher;
+import com.github.cocolollipop.mido_svg.xml.jaxb.model.Tag;
 import com.google.common.base.Verify;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
@@ -39,17 +40,12 @@ import schemas.ebx.dataservices_1.ProgramType.Root.Program;
 public class RofDatabase {
 
 	private Department department;
-	private ImmutableList<Formation> formations;
-
-	/* We chose to use a Set for the subjects'list because
-	 * we noticed that there are many duplicates
-	 * in the Rof database
-	 */
+	private ImmutableSet<Formation> formations;
 	private ImmutableSet<Subject> subjects;
-	private ImmutableList<String> tags;
+	private ImmutableMap<Subject,String> tags;
 	private ImmutableMap<String, Teacher> teachers;
-	
-	static public final String MENTION_MIDO_IDENT = "FRUAI0750736TPR";
+
+	static public final String MENTION_MIDO_IDENT = "?";
 
 	/**
 	 * Initialize an immutable Database with ROF informations.
@@ -129,6 +125,7 @@ public class RofDatabase {
 		List<String> courseRefs = new ArrayList<>();
 		List<Program> progs  = new ArrayList<>();
 		List<String> refProgram = new ArrayList<>();
+		Map<Subject,String> tagsList = new HashMap<>();
 
 		if (program.getProgramStructure() !=  null) {
 			refProgram = program.getProgramStructure().getValue().getRefProgram();
@@ -151,13 +148,19 @@ public class RofDatabase {
 					throw new IllegalStateException(e);
 				}
 
-				Subject s;
+				Subject subject;
 
-				s = createSubject(course, formation);
-
-				rofSubjectList.add(s);
+				subject = createSubject(course, formation);
+				
+				if (course.getSearchword() != null) {
+					for (String tag : course.getSearchword()) {
+						tagsList.put(subject, tag);
+					}
+				}
+				rofSubjectList.add(subject);
 			}
 		}
+		tags = ImmutableMap.copyOf(tagsList);
 		return ImmutableSet.copyOf(rofSubjectList);
 	}
 
@@ -168,14 +171,14 @@ public class RofDatabase {
 	 * Set a ImmutableList of Formation
 	 * @return 
 	 */
-	private ImmutableList<Formation> fetchFormations() {
+	private ImmutableSet<Formation> fetchFormations() {
 		List<Mention> mentionList = new ArrayList<>();
 		List<String> keysFormationList = new ArrayList<>();
 		List<Formation> formationList = new ArrayList<>();
 		List <String> refProgram = new ArrayList<>();
 		List<Subject> subjectsList= new ArrayList<>();
 		Querier querier = new Querier();
-		String predicate = "mentionID = '" + RofDatabase.MENTION_MIDO_IDENT + "'";
+		String predicate = "../../root/Mention";
 
 		try {
 			mentionList = querier.getMentions(predicate);
@@ -190,7 +193,7 @@ public class RofDatabase {
 				keysFormationList.add(m.getMentionID());
 			}
 		}
-
+		
 		if (keysFormationList.isEmpty()) {
 			/*keysFormationList.add("FRUAI0750736TPRMEA2MIE");
 			keysFormationList.add("FRUAI0750736TPRMEA3IDO");
@@ -233,7 +236,7 @@ public class RofDatabase {
 			}	
 		}
 		subjects = ImmutableSet.copyOf(subjectsList);
-		return ImmutableList.copyOf(formationList);
+		return ImmutableSet.copyOf(formationList);
 	}
 
 
@@ -280,7 +283,7 @@ public class RofDatabase {
 	 * Use to get tags attribute
 	 * Set tags
 	 */
-	public ImmutableList<String> getTags() {
+	public ImmutableMap<Subject,String> getTags() {
 		return tags;
 	}
 
@@ -288,7 +291,7 @@ public class RofDatabase {
 	 * Use to get formations attribute
 	 * Set formations
 	 */
-	public ImmutableList<Formation> getFormations() {
+	public ImmutableSet<Formation> getFormations() {
 		return formations;
 	}
 
@@ -407,17 +410,14 @@ public class RofDatabase {
 
 		RofDatabase test = RofDatabase.initialize();
 
-		System.out.print(test.getFormations().get(0).getFullName());
-
-		for (Subject s : test.subjects) {
-
-			if(s.getLevel().equals(test.getFormations().get(0))) {
-				System.out.print(s.getTitle() + " ===> ");
-				System.out.println(" "+ s.getResponsible().getFullNameTeacher());
-			}
-
+		for (Formation f : test.formations) {
+			System.out.println(f.getFullName());
 		}
 
+		for (Subject s : test.tags.keySet()) {
+			System.out.print(s.getTitle() + " ===> ");
+			System.out.println(test.tags.get(s));		
+		}
 	}
 
 }
