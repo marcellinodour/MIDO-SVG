@@ -30,7 +30,7 @@ public class GUISVGGenerator {
 
 	private boolean affAdmission;
 
-	private boolean affFormationLicence; // variable to
+	private boolean affFormationLicence;
 
 	private boolean affFormationMaster;
 
@@ -279,41 +279,29 @@ public class GUISVGGenerator {
 			public void widgetSelected(SelectionEvent e) {
 
 				try {
-					if (btnCheckButtonA3.getSelection()) { // If this radio
-															// button is
-															// selected form =
-															// "A3"
+					/*
+					 * If this radio button is selected form = "A3"
+					 */
+					if (btnCheckButtonA3.getSelection()) { 
 						settings = new Settings(affFormationLicence, affFormationMaster, affResponsable, affAdmission,
 								affSubject, affTeacher, affPrereq, "A3");
 
-					} else if (btnCheckButtonA4.getSelection()) { // If this
-																	// radio
-																	// button is
-																	// selected
-																	// form =
-																	// "A4"
+					} 
+					/*
+					 * If this radio button is selected form = "A4"
+					 */
+					else if (btnCheckButtonA4.getSelection()) {
 						settings = new Settings(affFormationLicence, affFormationMaster, affResponsable, affAdmission,
 								affSubject, affTeacher, affPrereq, "A4");
 
-					} else if (btnCheckButtonAutre.getSelection()) { // Else If
-																		// this
-																		// radio
-																		// button
-																		// is
-																		// selected
-																		// the
-																		// user
-																		// get
-																		// to
-																		// choose
-																		// his
-																		// own
-																		// values
-																		// height,
-																		// width
-
-						// we should get back the values that the user has
-						// entered in the spinners
+					} 
+					/*
+					 * Else If this radio button is selected the user get to choose his own values height, width
+					 */
+					else if (btnCheckButtonAutre.getSelection()) {
+						/*
+						 * we should get back the values that the user has entered in the spinners
+						 */
 						height = spinnerheight.getSelection();
 						width = spinnerwidth.getSelection();
 
@@ -321,26 +309,35 @@ public class GUISVGGenerator {
 								affSubject, affTeacher, affPrereq, width, height);
 					}
 
-					datas = new DataBase(settings);
-					responsive.defineObjectsPosition(datas.getFormations(), settings.getWidth(), settings.getHeight(), settings.isHiddenSubject());
-					LOGGER.info("Painting.");
-					svg.paint(settings, datas);
-
-					File file = new File(DrawerSVGGen.DRAWING_SVG);
-					file.createNewFile();
-				
-
-					try {
-						java.awt.Desktop.getDesktop().open(file);
-					} catch (IOException exc) {
-						System.out.println("Exception: " + exc.toString());
+					if( (affFormationLicence == true) && (affFormationMaster == true) ) {
+						labelEtat.setBounds(148, 467, 300, 18);
+						labelEtat.setText(" Veuillez sélectionner un choix de parcours ");
 					}
+					else {
+						datas = new DataBase(settings);
+						responsive.defineObjectsPosition(datas.getFormations(), settings.getWidth(), settings.getHeight(), settings.isHiddenSubject(), settings.isHiddenLicence(), settings.isHiddenMaster());
+						LOGGER.info("Painting.");
+						svg.paint(settings, datas);
+
+						File file = new File(DrawerSVGGen.DRAWING_SVG);
+						file.createNewFile();
+					
+
+						try {
+							java.awt.Desktop.getDesktop().open(file);
+						} catch (IOException exc) {
+							System.out.println("Exception: " + exc.toString());
+						}
+						labelEtat.setBounds(235, 467, 183, 20);
+						labelEtat.setText(" SVG généré ");
+					}
+					
 
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 
-				labelEtat.setText(" SVG généré ");
+				
 			}
 		});
 
@@ -366,7 +363,7 @@ public class GUISVGGenerator {
 		lblNewLabel.setText("MIDO Application");
 
 		Label lblChoixDuFormat = new Label(shell, SWT.NONE);
-		lblChoixDuFormat.setBounds(32, 130, 102, 14);
+		lblChoixDuFormat.setBounds(32, 130, 102, 18);
 		lblChoixDuFormat.setText("Choix du format: ");
 
 		btnCheckButtonA3 = new Button(shell, SWT.RADIO);
@@ -394,11 +391,11 @@ public class GUISVGGenerator {
 		lblLongueur.setText("");
 
 		lblMsg1 = new Label(shell, SWT.NONE);
-		lblMsg1.setBounds(374, 108, 166, 14);
+		lblMsg1.setBounds(374, 108, 166, 18);
 		lblMsg1.setText("");
 
 		lblChoixDeLaffichage = new Label(shell, SWT.NONE);
-		lblChoixDeLaffichage.setBounds(32, 222, 128, 14);
+		lblChoixDeLaffichage.setBounds(32, 222, 128, 18);
 		lblChoixDeLaffichage.setText("Choix de Parcours :");
 
 		btnLesprerequis = new Button(shell, SWT.CHECK);
@@ -438,11 +435,11 @@ public class GUISVGGenerator {
 		btnMaster.setText("Master");
 
 		lblEtou = new Label(shell, SWT.NONE);
-		lblEtou.setBounds(260, 260, 59, 14);
+		lblEtou.setBounds(260, 260, 59, 18);
 		lblEtou.setText("Et/Ou");
 
 		lblOptionsDaffichage = new Label(shell, SWT.NONE);
-		lblOptionsDaffichage.setBounds(32, 305, 114, 14);
+		lblOptionsDaffichage.setBounds(32, 305, 114, 18);
 		lblOptionsDaffichage.setText("Options d'affichage :");
 
 		btnLeModeDadmission = new Button(shell, SWT.CHECK);
@@ -462,7 +459,7 @@ public class GUISVGGenerator {
 		btnFermer.setText("Fermer");
 
 		labelEtat = new Label(shell, SWT.NONE);
-		labelEtat.setBounds(185, 467, 183, 14);
+		labelEtat.setBounds(185, 467, 183, 18);
 
 	}
 }

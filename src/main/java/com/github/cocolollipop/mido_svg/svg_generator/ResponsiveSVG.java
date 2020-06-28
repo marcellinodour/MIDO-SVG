@@ -152,7 +152,27 @@ public class ResponsiveSVG {
 	 * @param canvasX : width of the canvas          
 	 * @param canvasY : height of the canvas	  
 	 */
-	public void defineObjectsPosition(Collection<Formation> list, int canvasX, int canvasY, boolean hiddenSubjects) {
+	public void defineObjectsPosition(Collection<Formation> initialList, int canvasX, int canvasY, boolean hiddenSubjects, boolean hiddenLicence, boolean hiddenMaster) {
+
+		/*
+		 * We create a list with all the formation that will be drawn on the svg
+		 */
+		List<Formation> list = new ArrayList<>();
+		if(!hiddenLicence) {
+			for(Formation f : initialList) {
+				if( (f.getFullName().indexOf("L1") != -1) || (f.getFullName().indexOf("L2") != -1) || (f.getFullName().indexOf("L3") != -1)) {
+					list.add(f);
+				}
+			}
+		}
+		if(!hiddenMaster) {
+			for(Formation f : initialList) {
+				if( (f.getFullName().indexOf("M1") != -1) || (f.getFullName().indexOf("M2") != -1)) {
+					list.add(f);
+				}
+			}
+		}
+
 
 		mapOfGrade.put(1, "L1");
 		mapOfGrade.put(2, "L2");

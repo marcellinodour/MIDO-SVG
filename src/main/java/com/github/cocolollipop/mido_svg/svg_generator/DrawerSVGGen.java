@@ -170,16 +170,19 @@ public class DrawerSVGGen {
 			g.draw(new Rectangle(0,0,settings.getWidth(), 744));
 			g.setPaint(new Color(223,242,255));
 			for (Formation l2 : l.getAvailableFormations()) {
-				// draw the lines between the formation and the avalaible
-				// formations
-				centerx1 = g.getFontMetrics().stringWidth(l.getFullName()) / 2;
-				centerx2 = g.getFontMetrics().stringWidth(l2.getFullName()) / 2;
+				if(listToDraw.contains(l2)) {
+					/*
+					 * draw the lines between the formation and the available formations
+					 */
+					centerx1 = g.getFontMetrics().stringWidth(l.getFullName()) / 2;
+					centerx2 = g.getFontMetrics().stringWidth(l2.getFullName()) / 2;
+					
+					controlSettings(l.getPoint().x + centerx1, l.getPoint().y + lineYDOWN, settings.getWidth(), settings.getHeight());
+					controlSettings(l2.getPoint().x + centerx2, l2.getPoint().y + lineYUP, settings.getWidth(), settings.getHeight());
+					g.drawLine(l.getPoint().x + centerx1, l.getPoint().y + lineYDOWN, l2.getPoint().x + centerx2,
+							l2.getPoint().y + lineYUP);
+				}
 				
-				controlSettings(l.getPoint().x + centerx1, l.getPoint().y + lineYDOWN, settings.getWidth(), settings.getHeight());
-				controlSettings(l2.getPoint().x + centerx2, l2.getPoint().y + lineYUP, settings.getWidth(), settings.getHeight());
-				g.drawLine(l.getPoint().x + centerx1, l.getPoint().y + lineYDOWN, l2.getPoint().x + centerx2,
-						l2.getPoint().y + lineYUP);
-
 			}
 
 		}
@@ -276,11 +279,14 @@ public class DrawerSVGGen {
 						for (Subject s2 : f.getSubjects()) {
 							if (settings.isHiddenPrerequisites() == false) {
 								for (Subject p : s2.getListOfPrerequisites()) {
-									g.setPaint(Color.orange);
-									controlSettings(s.getPoint().x + 15, s.getPoint().y - 20, settings.getWidth(), settings.getHeight());
-									controlSettings(p.getPoint().x + 30, p.getPoint().y + 3, settings.getWidth(), settings.getHeight());
-									drawArrow(g, s.getPoint().x + 15, s.getPoint().y - 20, p.getPoint().x + 30,
-											p.getPoint().y + 3);
+									Formation f2 = p.getLevel();
+									if(f2.isShown()) {
+										g.setPaint(Color.orange);
+										controlSettings(s.getPoint().x + 15, s.getPoint().y - 20, settings.getWidth(), settings.getHeight());
+										controlSettings(p.getPoint().x + 30, p.getPoint().y + 3, settings.getWidth(), settings.getHeight());
+										drawArrow(g, s.getPoint().x + 15, s.getPoint().y - 20, p.getPoint().x + 30,
+												p.getPoint().y + 3);
+									}
 								}
 							}
 							g.setPaint(Color.black);
