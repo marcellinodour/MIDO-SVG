@@ -104,7 +104,6 @@ public class RofDatabase {
 			}
 		}
 		return child;
-
 	}
 
 	/** 
@@ -152,6 +151,10 @@ public class RofDatabase {
 
 				subject = createSubject(course, formation);
 				
+				if(!(course.getFormalPrerequisites() == null)) {
+					subject.addListOfPrerequisites(new Subject(course.getFormalPrerequisites().getValue().getFr().getValue(), 0));
+				}
+
 				if (course.getSearchword() != null) {
 					for (String tag : course.getSearchword()) {
 						tagsList.put(subject, tag);
@@ -194,7 +197,7 @@ public class RofDatabase {
 				keysFormationList.add(m.getMentionID());
 			}
 		}
-		*/
+		 */
 		if (keysFormationList.isEmpty()) {
 			/*keysFormationList.add("FRUAI0750736TPRMEA2MIE");
 			keysFormationList.add("FRUAI0750736TPRMEA3IDO");
@@ -404,22 +407,7 @@ public class RofDatabase {
 
 		Master master = new Master(program.getProgramName().getValue().getFr().getValue(), level);
 		return master;
-
 	}
-
-	/*public static void main (String[] args) throws Exception {
-
-		RofDatabase test = RofDatabase.initialize();
-
-		for (Formation f : test.formations) {
-			System.out.println(f.getFullName());
-		}
-
-		for (Subject s : test.tags.keySet()) {
-			System.out.print(s.getTitle() + " ===> ");
-			System.out.println(test.tags.get(s));		
-		}
-	}*/
 
 }
 
