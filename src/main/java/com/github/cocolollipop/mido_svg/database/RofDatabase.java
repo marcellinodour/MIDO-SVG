@@ -178,6 +178,7 @@ public class RofDatabase {
 		List <String> refProgram = new ArrayList<>();
 		List<Subject> subjectsList= new ArrayList<>();
 		Querier querier = new Querier();
+		/*
 		String predicate = "../../root/Mention";
 
 		try {
@@ -193,7 +194,7 @@ public class RofDatabase {
 				keysFormationList.add(m.getMentionID());
 			}
 		}
-		
+		*/
 		if (keysFormationList.isEmpty()) {
 			/*keysFormationList.add("FRUAI0750736TPRMEA2MIE");
 			keysFormationList.add("FRUAI0750736TPRMEA3IDO");
@@ -406,7 +407,7 @@ public class RofDatabase {
 
 	}
 
-	public static void main (String[] args) throws Exception {
+	/*public static void main (String[] args) throws Exception {
 
 		RofDatabase test = RofDatabase.initialize();
 
@@ -418,7 +419,7 @@ public class RofDatabase {
 			System.out.print(s.getTitle() + " ===> ");
 			System.out.println(test.tags.get(s));		
 		}
-	}
+	}*/
 
 }
 
