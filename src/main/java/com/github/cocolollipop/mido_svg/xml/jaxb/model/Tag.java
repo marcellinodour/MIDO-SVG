@@ -22,11 +22,11 @@ import javax.xml.bind.annotation.XmlType;
 public class Tag {
 
 	@XmlElement(name = "name")
-	private String name; // Name of the tag
+	private String name; 
 
 	@XmlElementWrapper(name = "subjects")
 	@XmlElement(name = "subject")
-	private Set<String> subjects; // we are using a set to avoid duplicate entry
+	private Set<String> subjects; 
 
 	public void addSubject(String math) {
 		if (subjects == null) {

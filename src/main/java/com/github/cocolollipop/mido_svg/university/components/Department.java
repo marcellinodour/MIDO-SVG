@@ -9,30 +9,31 @@ import java.util.ArrayList;
  *
  */
 public class Department {
-	// name of the department (for example: "MIDO", "LSO" etc.)
+	
 	private String title;
-
-	// list of the formations
 	protected ArrayList<Formation> listOfFormations;
-
-	// coordinate X
 	protected int posX;
-
-	// coordinate Y
 	protected int posY;
 
-	public Department() {
+	public static Department factory(String name) {
+		return new Department(name);
+	}
+	
+	private Department() {
 		this.title = "";
 		this.posX = 0;
 		this.posY = 0;
 	}
 
-	// Constructors
-	public Department(String name, int x, int y) {
+	private Department(String name, int x, int y) {
 		this.title = name;
 		this.posX = x;
 		this.posY = y;
 
+	}
+	
+	private Department(String name) {
+		this.title = name;
 	}
 
 	public String getNomDepartement() {
